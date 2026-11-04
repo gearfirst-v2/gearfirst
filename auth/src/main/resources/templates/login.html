@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GearFirst 로그인</title>
+    <link rel="alternate icon" type="image/png" th:href="@{/images/gearfirst_logo_favicon.png}">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', 'Segoe UI', sans-serif;
+            background-color: #f7f8fa;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100dvh;
+        }
+
+        .login-wrapper {
+            width: 420px;
+            background-color: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            padding: 50px 45px;
+            text-align: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .logo img {
+            height: 28px;
+            margin: 0 auto;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #444;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #777;
+            font-size: 15px;
+            margin-bottom: 35px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        label {
+            text-align: left;
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input {
+            padding: 13px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /*  input 클릭(포커스) 색상 변경 */
+        input:focus {
+            border-color: #111827;
+        }
+
+        /*  버튼 색상 변경 */
+        button {
+            background-color: #111827;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 13px 0;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.25s ease;
+        }
+
+        /*  hover 시 살짝 더 어둡게 */
+        button:hover {
+            background-color: #0b0f1a;
+        }
+
+        .error {
+            background-color: #fdecec;
+            color: #d32f2f;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .footer a {
+            color: #0056d2;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /*  반응형: 모바일 화면 */
+        @media (max-width: 480px) {
+            .login-wrapper {
+                width: 100%;
+                max-width: 360px;
+                padding: 40px 25px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .logo-text {
+                font-size: 22px;
+            }
+
+            input, button {
+                font-size: 14px;
+                padding: 11px 12px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                margin-bottom: 25px;
+            }
+
+            .footer {
+                font-size: 12px;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="logo">
+
+        <img th:src="@{/images/gearfirst_logo.png}" alt="GearFirst 로고">
+
+    </div>
+
+    <div class="subtitle">시스템에 로그인하여 업무를 시작하세요</div>
+
+    <form th:action="@{/login}" method="post">
+        <div th:if="${param.error}" class="error">
+            이메일 또는 비밀번호가 올바르지 않습니다.
+        </div>
+
+        <label for="email">이메일</label>
+        <input type="text" id="email" name="email" placeholder="example@gearfirst.com" required>
+
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+
+        <button type="submit">로그인</button>
+    </form>
+
+    <div class="footer">
+        ⓒ 2025 GearFirst. All rights reserved.
+    </div>
+</div>
+
+</body>
+</html>
