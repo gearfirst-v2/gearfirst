@@ -1,0 +1,91 @@
+server:
+  port: 8443              # HTTPS 포트 (추가)
+  shutdown: graceful
+  servlet:
+    context-path: /
+
+
+spring:
+  application:
+    name: gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #jwk-set-uri: http://127.0.0.1:8084
+          jwk-set-uri: http://34.120.215.23/auth/oauth2/jwks
+          #jwk-set-uri: http://localhost:8084/oauth2/jwks
+          #issuer-uri: http://localhost:8084
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  cloud:
+    gateway:
+
+      # --- API 라우팅 규칙 정의 ---
+      routes:
+        - id: receipt-service-route
+          # "lb"는 "Load Balancer"의 약자입니다.
+          # 쿠버네티스 내부의 Service 이름(receipt-service)을 찾아가라는 뜻입니다.
+          uri: lb://receipt-service
+          predicates:
+            # 외부에서 /receipt/ 로 시작하는 모든 요청은 이 규칙을 따릅니다.
+            - Path=/receipt/**
+
+        - id: order-service-route
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+
+
+
+        - id: inventory-service-route
+          uri: lb://inventory-service
+          predicates:
+            - Path=/inventory/**
+
+        - id: warehouse-service-route
+          uri: lb://warehouse-service
+          predicates:
+            - Path=/warehouse/**
+
+        - id: user-service-route
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+      server:
+        webflux:
+          discovery:
+            locator:
+              lower-case-service-id: true
+          httpclient:
+            wiretap: true
+          default-filters:
+            - PreserveHostHeader
+          forwarded-headers-strategy: none
+          filter:
+            remove-hop-by-hop: false
+
+
+# 헬스 체크 경로 활성화
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+    health:
+      show-details: when-authorized
+
+# 로그 설정
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
+    org.springframework.security: TRACE
+    com.gearfirst.gateway: DEBUG
