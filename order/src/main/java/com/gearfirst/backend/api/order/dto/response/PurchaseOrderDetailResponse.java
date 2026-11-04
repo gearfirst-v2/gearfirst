@@ -1,0 +1,44 @@
+package com.gearfirst.backend.api.order.dto.response;
+
+import com.gearfirst.backend.api.order.entity.OrderItem;
+import com.gearfirst.backend.api.order.entity.PurchaseOrder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Getter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PurchaseOrderDetailResponse {
+    private Long orderId;
+    private String orderNumber;
+    private String status;
+    private int totalPrice;
+    private LocalDateTime requestDate;
+    private LocalDateTime processedDate;
+    private LocalDateTime transferDate;
+    private LocalDateTime completedDate;
+    private List<OrderItemResponse> items;
+
+    public static PurchaseOrderDetailResponse from(PurchaseOrder order, List<OrderItem> items){
+        return PurchaseOrderDetailResponse.builder()
+                .orderId(order.getId())
+                .orderNumber(order.getOrderNumber())
+                .status(order.getStatus().name())
+                .totalPrice(order.getTotalPrice())
+                .requestDate(order.getRequestDate())
+                .processedDate(order.getProcessedDate())
+                .transferDate(order.getTransferDate())
+                .completedDate(order.getCompletedDate())
+                .items(items.stream()
+                        .map(OrderItemResponse::from)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+}
