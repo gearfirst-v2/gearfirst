@@ -40,10 +40,7 @@ public class SecurityConfig {
                             .anyExchange().authenticated()
                     )
                     .oauth2ResourceServer(oauth2 -> oauth2
-                            .jwt(jwt -> jwt
-                                            .jwkSetUri("http://34.120.215.23/auth/oauth2/jwks")
-                                    //.jwkSetUri("https://gearfirst-auth-mobile.duckdns.org/auth/oauth2/jwks")
-                            )
+                            .jwt(jwt -> {}) // JwtDecoderConfig의 jwtDecoder 빈을 사용
                             .authenticationEntryPoint(jwtGatewayAuthLogger)
                     )
                     .build();

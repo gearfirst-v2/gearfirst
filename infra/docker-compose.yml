@@ -96,5 +96,19 @@ services:
       kafka:
         condition: service_started
 
+  gateway:
+    build: ../gateway
+    environment:
+      SPRING_CONFIG_LOCATION: file:/config/application.yml
+      AUTH_JWK_SET_URI: http://auth:8080/auth/oauth2/jwks
+    volumes:
+      - ./config/gateway.yml:/config/application.yml:ro
+    ports:
+      - "8080:8080" # 브라우저·프론트는 이 주소 하나로 모든 서비스에 접속
+    depends_on:
+      - auth
+      - user
+      - order
+
 volumes:
   pgdata:

@@ -1,0 +1,54 @@
+# 로컬용 gateway 설정. 원본: gateway/src/main/resources/application.yaml
+# 원본은 쿠버네티스 서비스 디스커버리(lb://user-service)를 썼지만, 로컬은 docker 서비스 이름으로 바로 보낸다.
+server:
+  port: 8080 # 원본은 8443(HTTPS 예정)이었지만 TLS 설정이 없어 로컬은 http 8080
+  shutdown: graceful
+
+spring:
+  application:
+    name: gateway
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${AUTH_JWK_SET_URI}
+  cloud:
+    kubernetes:
+      enabled: false
+    gateway:
+      server:
+        webflux:
+          default-filters:
+            - PreserveHostHeader # 브라우저가 접속한 주소(localhost:8080)를 auth에 그대로 넘겨 리다이렉트 주소가 맞게 만들어진다
+          routes:
+            # 원본에는 auth 라우트가 없었다(운영에서는 ingress가 /auth를 auth로 직접 보냄)
+            - id: auth-service-route
+              uri: http://auth:8080
+              predicates:
+                - Path=/auth/**
+            - id: user-service-route
+              uri: http://user:8080
+              predicates:
+                - Path=/user/**
+            - id: order-service-route
+              uri: http://order:8080
+              predicates:
+                - Path=/order/**
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.springframework.cloud.gateway: info
+    org.springframework.security: info
+    com.gearfirst.gateway: debug
