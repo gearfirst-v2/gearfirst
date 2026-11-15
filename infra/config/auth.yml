@@ -1,0 +1,65 @@
+# 로컬용 auth 설정. 원본: Gear-First/GitOps auth/auth-configmap.yaml
+server:
+  shutdown: graceful
+  servlet:
+    context-path: /auth
+    session:
+      cookie:
+        # 로컬은 http라 secure 쿠키를 쓰면 브라우저가 세션 쿠키를 버린다
+        same-site: Lax
+        secure: false
+  forward-headers-strategy: framework
+
+auth:
+  issuer: ${AUTH_ISSUER}
+
+user-service:
+  url: ${USER_SERVICE_URL}
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  datasource:
+    url: jdbc:postgresql://postgres:5432/authdb
+    username: postgres
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  mail:
+    # 실제 메일 대신 Mailpit으로 보낸다 (http://localhost:8025 에서 확인)
+    host: mailpit
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+mail:
+  sender:
+    address: noreply@gearfirst.local
+    name: GearFirst 운영팀
+
+management:
+  health:
+    mail:
+      enabled: false
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.hibernate.SQL: info
+    org.springframework.security: info
+    org.springframework.security.oauth2.server.authorization: debug
