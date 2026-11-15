@@ -1,0 +1,56 @@
+# 로컬용 user 설정. 원본: Gear-First/GitOps user/user-configmap.yaml
+server:
+  shutdown: graceful
+  servlet:
+    context-path: /user
+
+auth-service:
+  url: ${AUTH_SERVICE_URL}
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  datasource:
+    url: jdbc:postgresql://postgres:5432/userdb
+    username: postgres
+    password: ${DB_PASSWORD}
+  jpa:
+    # 테이블을 만든 뒤에 기초 데이터(user-seed.sql)를 넣는다
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+      data-locations: file:/config/user-seed.sql
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      acks: all
+      enable-idempotence: true
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.use.type.headers: false
+    consumer:
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
