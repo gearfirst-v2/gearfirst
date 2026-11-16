@@ -42,5 +42,73 @@ services:
       - "1025:1025" # SMTP (서비스가 메일을 보내는 곳)
       - "8025:8025" # 받은 메일을 보는 웹 화면
 
+  auth:
+    build: ../auth
+    environment:
+      # 운영에서 ConfigMap을 마운트하던 방식 그대로 설정 파일을 주입
+      SPRING_CONFIG_LOCATION: file:/config/application.yml
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      # 최종적으로 브라우저는 gateway(8080)를 거쳐 auth에 접속한다
+      AUTH_ISSUER: http://localhost:8080/auth
+      USER_SERVICE_URL: http://user:8080/user
+    volumes:
+      - ./config/auth.yml:/config/application.yml:ro
+    ports:
+      - "8081:8080" # gateway 붙기 전 단독 확인용
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  user:
+    build: ../user
+    environment:
+      SPRING_CONFIG_LOCATION: file:/config/application.yml
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      AUTH_SERVICE_URL: http://auth:8080/auth
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./config/user.yml:/config/application.yml:ro
+      - ./config/user-seed.sql:/config/user-seed.sql:ro
+    ports:
+      - "8082:8080" # gateway 붙기 전 단독 확인용
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  order:
+    build: ../order
+    environment:
+      SPRING_CONFIG_LOCATION: file:/config/application.yml
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      WAREHOUSE_URL: http://warehouse:8080/warehouse # 로컬에는 없는 서비스
+    volumes:
+      - ./config/order.yml:/config/application.yml:ro
+    ports:
+      - "8083:8080" # gateway 붙기 전 단독 확인용
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  gateway:
+    build: ../gateway
+    environment:
+      SPRING_CONFIG_LOCATION: file:/config/application.yml
+      AUTH_JWK_SET_URI: http://auth:8080/auth/oauth2/jwks
+    volumes:
+      - ./config/gateway.yml:/config/application.yml:ro
+    ports:
+      - "8080:8080" # 브라우저·프론트는 이 주소 하나로 모든 서비스에 접속
+    depends_on:
+      - auth
+      - user
+      - order
+
 volumes:
   pgdata:

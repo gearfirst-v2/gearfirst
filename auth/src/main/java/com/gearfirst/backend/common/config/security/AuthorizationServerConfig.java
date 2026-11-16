@@ -95,10 +95,9 @@ public class AuthorizationServerConfig {
      * issuer(토큰 발급자) URI 지정
      */
     @Bean
-    public AuthorizationServerSettings authorizationServerSettings() {
+    public AuthorizationServerSettings authorizationServerSettings(@Value("${auth.issuer}") String issuer) {
         return AuthorizationServerSettings.builder()
-                //.issuer("http://localhost:8084") // JWT iss 값으로 사용됨
-                .issuer("http://34.120.215.23/auth") // JWT iss 값으로 사용됨 배포용
+                .issuer(issuer) // JWT iss 값. 환경마다 달라서 설정(AUTH_ISSUER)으로 주입
                 .build();
     }
 }
