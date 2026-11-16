@@ -37,6 +37,8 @@ out/
 .vscode/
 
 *.yml
+# 테스트 설정은 비밀값이 없어 커밋한다
+!src/test/resources/application.yml
 
 # GitHub Actions workflows는 무시하지 않음
 !.github/
