@@ -21,8 +21,7 @@ jobs:
             order: 'order/**'
             gateway: 'gateway/**'
 
-  # 바뀐 서비스마다 job을 하나씩 띄워 빌드한다.
-  # 테스트는 테스트용 설정이 생기면(2단계) ./gradlew test로 켠다.
+  # 바뀐 서비스마다 job을 하나씩 띄워 빌드하고 테스트한다.
   build:
     needs: changes
     if: needs.changes.outputs.services != '[]'
@@ -41,4 +40,4 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew bootJar
+      - run: ./gradlew build # 컴파일 + 테스트 + jar

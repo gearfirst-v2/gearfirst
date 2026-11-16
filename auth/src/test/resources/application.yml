@@ -1,0 +1,16 @@
+# 테스트 전용 설정. 운영 설정은 infra/config/auth.yml(로컬)과 배포 환경에 따로 있다.
+# DB는 적지 않는다: H2가 있으면 Spring Boot가 컨텍스트마다 이름이 다른 메모리 DB를 자동으로 만든다.
+auth:
+  issuer: http://localhost/auth
+
+user-service:
+  url: http://localhost/user # 컨텍스트가 뜰 때는 호출하지 않는다
+
+spring:
+  mail:
+    host: localhost # JavaMailSender 빈을 만들기 위한 값. 테스트 중 실제로 보내지 않는다
+
+mail:
+  sender:
+    address: test@gearfirst.local
+    name: GearFirst 테스트

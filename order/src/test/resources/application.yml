@@ -1,0 +1,4 @@
+# 테스트 전용 설정. 운영 설정은 infra/config/order.yml(로컬)과 배포 환경에 따로 있다.
+# DB는 적지 않는다: H2가 있으면 Spring Boot가 컨텍스트마다 이름이 다른 메모리 DB를 자동으로 만든다.
+warehouse:
+  url: http://localhost/warehouse # 컨텍스트가 뜰 때는 호출하지 않는다
