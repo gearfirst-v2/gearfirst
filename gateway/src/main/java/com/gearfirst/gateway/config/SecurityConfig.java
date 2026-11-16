@@ -26,17 +26,13 @@ public class SecurityConfig {
                     .cors(cors -> cors.disable())
                     .authorizeExchange(auth -> auth
                             .pathMatchers(
-                                    "/swagger-ui/**",
-                                    "/v3/api-docs/**",
-                                    "/actuator/**",
+                                    // auth는 로그인 화면·토큰 발급·JWKS처럼 토큰을 받기 전에 쓰는 곳이라 열어 두고,
+                                    // auth 안의 보안 설정이 각 엔드포인트를 직접 지킨다
                                     "/auth/**",
-                                    "/user/**",
-                                    "/inventory/**",
-                                    "/receipt/**", "/order/**",
-                                    "/warehouse/**",
-                                    "/notification/**",
-                                    "/.well-known/acme-challenge/**"
+                                    "/actuator/health/**",
+                                    "/actuator/info"
                             ).permitAll()
+                            // user, order 등 나머지 서비스는 gateway에서 토큰을 검증한 요청만 보낸다
                             .anyExchange().authenticated()
                     )
                     .oauth2ResourceServer(oauth2 -> oauth2

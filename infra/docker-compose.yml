@@ -53,8 +53,7 @@ services:
       USER_SERVICE_URL: http://user:8080/user
     volumes:
       - ./config/auth.yml:/config/application.yml:ro
-    ports:
-      - "8081:8080" # gateway 붙기 전 단독 확인용
+    # 호스트 포트를 열지 않는다. 운영(ClusterIP)처럼 gateway를 거쳐서만 접근해야 gateway 검사를 우회할 수 없다
     depends_on:
       postgres:
         condition: service_healthy
@@ -71,8 +70,7 @@ services:
     volumes:
       - ./config/user.yml:/config/application.yml:ro
       - ./config/user-seed.sql:/config/user-seed.sql:ro
-    ports:
-      - "8082:8080" # gateway 붙기 전 단독 확인용
+    # 호스트 포트를 열지 않는다 (auth와 같은 이유)
     depends_on:
       postgres:
         condition: service_healthy
@@ -88,8 +86,7 @@ services:
       WAREHOUSE_URL: http://warehouse:8080/warehouse # 로컬에는 없는 서비스
     volumes:
       - ./config/order.yml:/config/application.yml:ro
-    ports:
-      - "8083:8080" # gateway 붙기 전 단독 확인용
+    # 호스트 포트를 열지 않는다 (auth와 같은 이유)
     depends_on:
       postgres:
         condition: service_healthy
