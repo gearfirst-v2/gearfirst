@@ -24,7 +24,12 @@ public class JwtClaimsHeaderFilter implements GlobalFilter, Ordered {
     private final ReactiveJwtDecoder jwtDecoder;
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange original, GatewayFilterChain chain) {
+        // 클라이언트가 보낸 X-User-* 헤더는 믿지 않는다. 항상 지우고, 아래에서 검증된 토큰으로만 다시 채운다
+        ServerWebExchange exchange = original.mutate()
+                .request(r -> r.headers(h -> h.keySet().removeIf(n -> n.regionMatches(true, 0, "X-User-", 0, 7))))
+                .build();
+
         log.error("🔥 JwtClaimsHeaderFilter ENTER : Host={}, URI={}",
                 exchange.getRequest().getHeaders().getFirst("Host"),
                 exchange.getRequest().getURI());
