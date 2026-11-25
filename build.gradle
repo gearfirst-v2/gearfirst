@@ -1,0 +1,7 @@
+// 루트에서 ./gradlew build|test|clean 하면 4개 서비스의 같은 태스크를 모두 실행한다.
+['build', 'test', 'clean'].each { name ->
+    tasks.register(name) {
+        group = 'gearfirst'
+        dependsOn gradle.includedBuilds*.task(":$name")
+    }
+}
