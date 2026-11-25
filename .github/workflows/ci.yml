@@ -41,3 +41,14 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew build # 컴파일 + 테스트 + jar
+
+  # 브랜치 보호의 필수 체크용. build는 matrix라 이름이 바뀌고 skip되기도 해서, 항상 도는 job 하나로 결과를 모은다.
+  # build가 하나라도 실패·취소되면 실패, 바뀐 서비스가 없어 skip되면 성공.
+  ci-result:
+    needs: [changes, build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+      - run: echo "CI 통과"
