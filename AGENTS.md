@@ -11,9 +11,9 @@ GearFirst v2: 부트캠프 팀 MSA 프로젝트 중 auth, user, order, gateway�
 
 ## 빌드·테스트
 
-- 루트 빌드는 없어요. 각 서비스 폴더에서 `./gradlew build` (컴파일 + 테스트 + jar)
+- 전체: 루트에서 `./gradlew build` (컴파일 + 테스트 + jar). 서비스 하나만: 그 폴더에서 `./gradlew build`. Gradle은 모두 9.1.0이에요.
 - Java 21이 필요해요. 로컬 기본 Java는 26이에요. `JAVA_HOME`이 21이 아니면 명령 앞에 `JAVA_HOME=$(/usr/libexec/java_home -v 21)`을 붙여요.
-- 테스트 하나만: `./gradlew test --tests 'com.gearfirst.gateway.HeaderSpoofingTest'`
+- 테스트 하나만(서비스 폴더에서): `./gradlew test --tests 'com.gearfirst.gateway.HeaderSpoofingTest'`
 - 테스트는 H2를 써요(DB 없이 실행). 설정은 서비스별 `src/test/resources/application.yml`.
 - 로컬 실행: `cd infra && docker compose up -d --build`. 외부 진입점은 gateway(8080) 하나, 메일은 Mailpit(8025).
 
@@ -42,6 +42,7 @@ GearFirst v2: 부트캠프 팀 MSA 프로젝트 중 auth, user, order, gateway�
 - PR 제목: `type(scope): 설명 (GEA-N)` 예) `fix(gateway): X-User-* 헤더 위조 차단 (GEA-8)`. 커밋 메시지도 같은 형식을 써요.
 - scope는 바꾼 폴더(auth, user, order, gateway, infra). 여러 개면 쉼표로, 레포 전체면 생략해요.
 - PR 본문: `.github/pull_request_template.md` 형식
+- dev에는 PR 없이 push할 수 있어요. main에는 PR로만 들어가고 `ci-result`가 통과해야 머지돼요.
 - 공격 라벨(A1, C1 등)은 바꾸지 말고 그대로 써요. 목록은 `docs/known-issues.md`. 라벨에 해당하는 이슈 번호(GEA-N)는 사용자에게 물어요.
 
 ## 협업 규칙
