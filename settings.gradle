@@ -1,0 +1,8 @@
+// 서비스 4개는 각자 독립된 Gradle 프로젝트(Boot 버전도 다름)라 includeBuild로 묶는다.
+// 각 폴더에서 ./gradlew build 하는 방식도 그대로 동작한다.
+rootProject.name = 'gearfirst'
+
+includeBuild('auth')
+includeBuild('user')
+includeBuild('order')
+includeBuild('gateway')
