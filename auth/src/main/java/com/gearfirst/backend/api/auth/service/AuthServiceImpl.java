@@ -45,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
                 .userId(request.getUserId())
                 .email(request.getEmail())
                 .password(encodedPassword)
+                .personalEmail(request.getPersonalEmail())
                 .build();
         authRepository.save(auth);
 
@@ -83,10 +84,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public void regenerateTempPassword(String email, String personalEmail) {
+    public void regenerateTempPassword(String email) {
         Auth auth = authRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        String personalEmail = auth.getPersonalEmail();
+        if (personalEmail == null) {
+            throw new KnownBusinessException(ErrorStatus.NOT_REGISTERED_PERSONAL_EMAIL_EXCEPTION.getMessage());
+        }
         // 새 임시 비밀번호 생성
         String newTempPassword = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
         String encoded = passwordEncoder.encode(newTempPassword);

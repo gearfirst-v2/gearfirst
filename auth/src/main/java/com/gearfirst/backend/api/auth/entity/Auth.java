@@ -29,6 +29,10 @@ public class Auth extends BaseTimeEntity {
     @Column(nullable = false, length = 255)
     private String password;
 
+    // 임시 비밀번호를 받을 주소. 재발급 때 요청 값이 아니라 이 값으로만 보낸다(C1)
+    @Column(name = "personal_email", length = 100)
+    private String personalEmail;
+
     @Enumerated(EnumType.STRING)
     private AuthStatus status;
 

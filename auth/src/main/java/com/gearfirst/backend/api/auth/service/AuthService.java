@@ -8,7 +8,7 @@ public interface AuthService {
 
     void changePassword(ChangePasswordRequest request);
 
-    void regenerateTempPassword(String email, String personalEmail);
+    void regenerateTempPassword(String email);
 
     void deleteUser(Long userId);
 }
