@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,11 +20,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.ForwardedHeaderFilter;
@@ -120,18 +124,26 @@ public class SecurityConfig {
                                 "/actuator/health/**", // liveness/readiness 모두 허용
                                 "/auth/actuator/**",
                                 "/actuator/info",
-                                "/api/v1/auth/signup", // 회원가입 허용
-                                "/auth/api/v1/auth/signup", // 회원가입 허용
-                                "/api/v1/auth/delete", // 회원 삭제
-                                "/auth/api/v1/auth/delete",
-                                "/auth/api/v1/auth/change-password", // 비밀번호 변경
-                                "/api/v1/auth/change-password",
+                                // 비밀번호를 잊은 사람이 쓰는 API라 토큰 없이 열어 둔다. 남의 비밀번호를 바꾸는 문제는 C6
                                 "/auth/api/v1/auth/regenerate-temp-password", // 임시비밀번호 발급
                                 "/api/v1/auth/regenerate-temp-password",
                                 "/.well-known/acme-challenge/**")
                         .permitAll()
+                        // user 서비스가 client credentials로 받은 서비스 토큰만 허용 (C2, GEA-13)
+                        .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/delete")
+                        .hasAuthority("SCOPE_internal")
+                        // 로그인한 사람의 JWT만 허용. 서비스 토큰과 폼 로그인 세션(CSRF 꺼짐)은 거부 (C3, GEA-13)
+                        .requestMatchers("/api/v1/auth/change-password")
+                        .access((authentication, context) ->
+                                new AuthorizationDecision(authentication.get() instanceof JwtAuthenticationToken token
+                                        && token.getAuthorities().stream()
+                                                .noneMatch(a -> a.getAuthority().equals("SCOPE_internal"))))
                         .anyRequest()
                         .authenticated())
+                // auth가 직접 JWT를 검증한다. gateway는 /auth/**를 검증 없이 통과시키기 때문 (ADR 0004)
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .exceptionHandling(ex -> ex.defaultAuthenticationEntryPointFor(
+                        new BearerTokenAuthenticationEntryPoint(), new AntPathRequestMatcher("/api/**")))
                 .formLogin(form -> form.loginPage("/login") // 커스텀 로그인 페이지
                         .loginProcessingUrl("/login") // 로그인 POST 엔드포인트
                         .usernameParameter("email")

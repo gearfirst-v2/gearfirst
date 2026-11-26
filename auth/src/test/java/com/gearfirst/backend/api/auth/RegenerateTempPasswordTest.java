@@ -60,7 +60,9 @@ class RegenerateTempPasswordTest {
 
     @Test
     void 가입_때_등록한_개인_이메일로_재발급된다() throws Exception {
+        // signup은 user 서비스의 서비스 토큰이 있어야 불린다(GEA-13). 여기선 계정을 만드는 준비 단계
         mockMvc.perform(post("/api/v1/auth/signup")
+                        .with(InternalApiCallerTest.serviceToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 """

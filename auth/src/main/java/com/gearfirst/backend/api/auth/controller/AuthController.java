@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +35,10 @@ public class AuthController {
 
     @Operation(summary = "비밀번호 변경 API", description = "비밀번호 변경을 진행합니다.")
     @PostMapping("/change-password")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
-        authService.changePassword(request);
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            @AuthenticationPrincipal Jwt jwt, @Valid @RequestBody ChangePasswordRequest request) {
+        // 본인 확인은 body가 아니라 검증된 토큰의 sub(userId)로 한다 (C3)
+        authService.changePassword(Long.valueOf(jwt.getSubject()), request);
         return ApiResponse.success_only(SuccessStatus.CHANGE_PASSWORD_SUCCESS);
     }
 
