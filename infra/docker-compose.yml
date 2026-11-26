@@ -51,6 +51,7 @@ services:
       # 최종적으로 브라우저는 gateway(8080)를 거쳐 auth에 접속한다
       AUTH_ISSUER: http://localhost:8080/auth
       USER_SERVICE_URL: http://user:8080/user
+      USER_SERVICE_CLIENT_SECRET: ${USER_SERVICE_CLIENT_SECRET}
     volumes:
       - ./config/auth.yml:/config/application.yml:ro
     # 호스트 포트를 열지 않는다. 운영(ClusterIP)처럼 gateway를 거쳐서만 접근해야 gateway 검사를 우회할 수 없다
@@ -66,6 +67,7 @@ services:
       SPRING_CONFIG_LOCATION: file:/config/application.yml
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       AUTH_SERVICE_URL: http://auth:8080/auth
+      USER_SERVICE_CLIENT_SECRET: ${USER_SERVICE_CLIENT_SECRET}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     volumes:
       - ./config/user.yml:/config/application.yml:ro

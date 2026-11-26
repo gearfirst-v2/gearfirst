@@ -2,3 +2,4 @@
 # DB는 적지 않는다: H2가 있으면 Spring Boot가 컨텍스트마다 이름이 다른 메모리 DB를 자동으로 만든다.
 auth-service:
   url: http://localhost/auth # 컨텍스트가 뜰 때는 호출하지 않는다
+  client-secret: test-user-service-secret
