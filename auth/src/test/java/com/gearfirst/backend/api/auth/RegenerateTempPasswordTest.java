@@ -113,6 +113,16 @@ class RegenerateTempPasswordTest {
         verify(mailService, never()).sendUserRegistrationMail(anyString(), anyString());
     }
 
+    @Test
+    void 이메일_형식이_틀리면_400이고_메일을_보내지_않는다() throws Exception {
+        regenerate("""
+                        {"email": "abc"}
+                        """)
+                .andExpect(status().isBadRequest());
+
+        verify(mailService, never()).sendUserRegistrationMail(anyString(), anyString());
+    }
+
     private void saveAccount(String email, String personalEmail) {
         authRepository.save(Auth.builder()
                 .userId(1L)
