@@ -6,7 +6,7 @@ import com.gearfirst.backend.api.auth.dto.CreateAccount;
 public interface AuthService {
     void createAccount(CreateAccount request);
 
-    void changePassword(ChangePasswordRequest request);
+    void changePassword(Long userId, ChangePasswordRequest request);
 
     void regenerateTempPassword(String email);
 

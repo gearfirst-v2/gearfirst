@@ -5,13 +5,17 @@ import com.gearfirst.backend.api.auth.dto.CreateAccount;
 import com.gearfirst.backend.api.auth.entity.Auth;
 import com.gearfirst.backend.api.auth.repository.AuthRepository;
 import com.gearfirst.backend.api.mail.MailService;
+import com.gearfirst.backend.common.exception.BadRequestException;
+import com.gearfirst.backend.common.exception.BaseException;
 import com.gearfirst.backend.common.exception.KnownBusinessException;
 import com.gearfirst.backend.common.exception.NotFoundException;
 import com.gearfirst.backend.common.response.ErrorStatus;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,16 +73,26 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    @Transactional
+    // 틀린 비밀번호(BadRequestException)에도 실패 횟수는 저장돼야 해서 롤백하지 않는다
+    @Transactional(noRollbackFor = BadRequestException.class)
     @Override
-    public void changePassword(ChangePasswordRequest request) {
+    public void changePassword(Long userId, ChangePasswordRequest request) {
         Auth auth = authRepository
-                .findByUserId(request.getUserId())
+                .findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        auth.verifyPassword(request.getCurrentPassword(), passwordEncoder);
+        LocalDateTime now = LocalDateTime.now();
+        // 401이면 프론트가 토큰을 갱신해 재시도해서 실패가 두 번 세진다. 그래서 400, 423을 쓴다
+        if (auth.isPasswordChangeLocked(now)) {
+            throw new BaseException(HttpStatus.LOCKED, "비밀번호를 여러 번 틀려 잠시 변경할 수 없습니다. 15분 뒤 다시 시도해주세요.");
+        }
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new KnownBusinessException("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
+        if (!auth.matchesPassword(request.getCurrentPassword(), passwordEncoder)) {
+            auth.recordPasswordChangeFailure(now);
+            throw new BadRequestException("현재 비밀번호가 잘못되었습니다. 다시 입력해주세요.");
+        }
+        auth.resetPasswordChangeFailures();
         auth.changePassword(request.getNewPassword(), passwordEncoder);
     }
 

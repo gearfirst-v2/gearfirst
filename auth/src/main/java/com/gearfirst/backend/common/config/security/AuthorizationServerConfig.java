@@ -25,7 +25,8 @@ public class AuthorizationServerConfig {
      * 인가코드, 리프래시토큰, PKCE 지원 설정
      */
     @Bean
-    public RegisteredClientRepository registeredClientRepository() {
+    public RegisteredClientRepository registeredClientRepository(
+            @Value("${auth.user-service-client-secret}") String userServiceClientSecret) {
         // 클라이언트를 구분하기 위한 고유 ID
 
         // 1. 웹 클라이언트 (React, Vue 등)
@@ -82,8 +83,19 @@ public class AuthorizationServerConfig {
                         .requireProofKey(true) // PKCE 필수
                         .build())
                 .build();
+        // 3. user 서비스 (signup, delete를 부를 때 쓰는 서비스 토큰, GEA-13)
+        RegisteredClient userServiceClient = RegisteredClient.withId("user-service-id")
+                .clientId("user-service")
+                .clientSecret(passwordEncoder.encode(userServiceClientSecret))
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .scope("internal")
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenTimeToLive(Duration.ofMinutes(5))
+                        .build())
+                .build();
         // 메모리 기반 저장소 TODO: 운영 시 DB 기반 Repository로 변경 필요
-        return new InMemoryRegisteredClientRepository(webClient, nativeAppClient);
+        return new InMemoryRegisteredClientRepository(webClient, nativeAppClient, userServiceClient);
     }
 
     /**

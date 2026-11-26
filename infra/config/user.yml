@@ -6,6 +6,8 @@ server:
 
 auth-service:
   url: ${AUTH_SERVICE_URL}
+  # auth에서 서비스 토큰(client credentials)을 받을 때 쓰는 비밀값. 값은 infra/.env에만 둔다 (GEA-13)
+  client-secret: ${USER_SERVICE_CLIENT_SECRET}
 
 spring:
   lifecycle:
