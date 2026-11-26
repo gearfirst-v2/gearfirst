@@ -1,5 +1,8 @@
 package com.gearfirst.gateway.config.filter;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -12,10 +15,6 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -30,7 +29,8 @@ public class JwtClaimsHeaderFilter implements GlobalFilter, Ordered {
                 .request(r -> r.headers(h -> h.keySet().removeIf(n -> n.regionMatches(true, 0, "X-User-", 0, 7))))
                 .build();
 
-        log.error("🔥 JwtClaimsHeaderFilter ENTER : Host={}, URI={}",
+        log.error(
+                "🔥 JwtClaimsHeaderFilter ENTER : Host={}, URI={}",
                 exchange.getRequest().getHeaders().getFirst("Host"),
                 exchange.getRequest().getURI());
 
@@ -43,7 +43,7 @@ public class JwtClaimsHeaderFilter implements GlobalFilter, Ordered {
         try {
             String[] parts = token.split("\\.");
             if (parts.length >= 2) {
-                String headerJson  = new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8);
+                String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8);
                 String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
                 log.error("[JWT RAW-HEADER] {}", headerJson);
                 log.error("[JWT RAW-PAYLOAD] {}", payloadJson);
@@ -55,17 +55,19 @@ public class JwtClaimsHeaderFilter implements GlobalFilter, Ordered {
         }
 
         // 2) 실제 검증 (성공하면 헤더 붙여서 다운스트림으로 전달)
-        return jwtDecoder.decode(token)
+        return jwtDecoder
+                .decode(token)
                 .flatMap(jwt -> {
                     log.debug("[JWT Decode OK] headers={}", jwt.getHeaders());
                     log.debug("[JWT Decode OK] claims={}", jwt.getClaims());
 
-                    ServerHttpRequest mutated = exchange.getRequest().mutate()
-                            .header("X-User-Id",      jwt.getClaimAsString("sub"))
-                            .header("X-User-Name",    b64(jwt.getClaimAsString("name")))
-                            .header("X-User-Rank",    b64(jwt.getClaimAsString("rank")))
-                            .header("X-User-Region",  b64(jwt.getClaimAsString("region")))
-                            .header("X-User-WorkType",b64(jwt.getClaimAsString("work_type")))
+                    ServerHttpRequest mutated = exchange.getRequest()
+                            .mutate()
+                            .header("X-User-Id", jwt.getClaimAsString("sub"))
+                            .header("X-User-Name", b64(jwt.getClaimAsString("name")))
+                            .header("X-User-Rank", b64(jwt.getClaimAsString("rank")))
+                            .header("X-User-Region", b64(jwt.getClaimAsString("region")))
+                            .header("X-User-WorkType", b64(jwt.getClaimAsString("work_type")))
                             .build();
                     return chain.filter(exchange.mutate().request(mutated).build());
                 })
@@ -75,7 +77,8 @@ public class JwtClaimsHeaderFilter implements GlobalFilter, Ordered {
 
                     // 디버깅 편의: 요청 메타도 찍기
                     Map<String, Object> attrs = exchange.getAttributes();
-                    log.error("Path={}, Query={}, Host={}",
+                    log.error(
+                            "Path={}, Query={}, Host={}",
                             exchange.getRequest().getURI().getPath(),
                             exchange.getRequest().getURI().getQuery(),
                             exchange.getRequest().getHeaders().getFirst("Host"));
@@ -90,5 +93,8 @@ public class JwtClaimsHeaderFilter implements GlobalFilter, Ordered {
         return Base64.getEncoder().encodeToString(s.getBytes(StandardCharsets.UTF_8));
     }
 
-    @Override public int getOrder() { return -100; }
+    @Override
+    public int getOrder() {
+        return -100;
+    }
 }

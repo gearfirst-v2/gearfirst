@@ -15,5 +15,6 @@ public class WorkTypeEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String workTypeName;
 }

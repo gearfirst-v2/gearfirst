@@ -2,13 +2,12 @@ package com.gearfirst.backend.api.order.dto.response;
 
 import com.gearfirst.backend.api.order.entity.OrderItem;
 import com.gearfirst.backend.api.order.entity.PurchaseOrder;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @SuperBuilder
@@ -31,9 +30,7 @@ public class HeadPurchaseOrderDetailResponse extends PurchaseOrderDetailResponse
                 .processedDate(order.getProcessedDate())
                 .transferDate(order.getTransferDate())
                 .completedDate(order.getCompletedDate())
-                .items(items.stream()
-                        .map(OrderItemResponse::from)
-                        .collect(Collectors.toList()))
+                .items(items.stream().map(OrderItemResponse::from).collect(Collectors.toList()))
                 // 자식(본사 전용) 필드
                 .branchCode(order.getRequesterCode())
                 .engineerName(order.getRequesterName())
@@ -41,5 +38,4 @@ public class HeadPurchaseOrderDetailResponse extends PurchaseOrderDetailResponse
                 .note(order.getNote())
                 .build();
     }
-
 }

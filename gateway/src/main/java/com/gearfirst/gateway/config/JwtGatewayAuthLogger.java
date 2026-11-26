@@ -14,7 +14,6 @@ public class JwtGatewayAuthLogger implements ServerAuthenticationEntryPoint {
 
     private static final Logger log = LoggerFactory.getLogger(JwtGatewayAuthLogger.class);
 
-
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
         log.error("===== GATEWAY JWT FAILURE =====");

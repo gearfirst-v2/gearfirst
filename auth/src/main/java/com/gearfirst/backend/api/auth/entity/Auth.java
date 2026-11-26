@@ -4,20 +4,20 @@ import com.gearfirst.backend.common.entity.BaseTimeEntity;
 import com.gearfirst.backend.common.exception.KnownBusinessException;
 import com.gearfirst.backend.common.exception.UnAuthorizedException;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Getter @Builder
+@Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "auth")
 public class Auth extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="auth_id")
+    @Column(name = "auth_id")
     private Long authId;
 
     @Column(name = "user_id", unique = true)
@@ -33,10 +33,10 @@ public class Auth extends BaseTimeEntity {
     private AuthStatus status;
 
     @Column(name = "last_login_at")
-    private LocalDateTime lastLoginAt;      //마지막 로그인 시간
-    @Column(name = "is_first_login")
-    private Boolean isFirstLogin;           //첫 로그인 여부
+    private LocalDateTime lastLoginAt; // 마지막 로그인 시간
 
+    @Column(name = "is_first_login")
+    private Boolean isFirstLogin; // 첫 로그인 여부
 
     @PrePersist
     public void prePersist() {
@@ -54,7 +54,6 @@ public class Auth extends BaseTimeEntity {
         this.lastLoginAt = LocalDateTime.now();
     }
 
-
     public void verifyPassword(String rawPassword, PasswordEncoder encoder) {
         if (!encoder.matches(rawPassword, this.password)) {
             throw new UnAuthorizedException("비밀번호가 잘못되었습니다. 다시 입력해주세요.");
@@ -64,6 +63,7 @@ public class Auth extends BaseTimeEntity {
     public void changePassword(String newPassword, PasswordEncoder encoder) {
         this.password = encoder.encode(newPassword);
     }
+
     public void updatePassword(String newEncodedPassword) {
         this.password = newEncodedPassword;
     }
@@ -74,5 +74,4 @@ public class Auth extends BaseTimeEntity {
         }
         this.userId = userId;
     }
-
 }

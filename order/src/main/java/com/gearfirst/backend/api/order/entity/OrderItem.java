@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name="order_item")
+@Table(name = "order_item")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="order_item_id")
+    @Column(name = "order_item_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,29 +24,27 @@ public class OrderItem {
     private PurchaseOrder purchaseOrder;
 
     @Column(nullable = false)
-    private int quantity;           //요청 수량
-    @Column(name="part_id",nullable = false)
-    private long partId;            //부품 id
-    @Column(name="part_name",nullable = false, length = 100)
-    private String partName;   //부품 이름
-    @Column(name="part_code",nullable = false, length = 50)
-    private String partCode;        //부품 코드
-    @Column(nullable = false)
-    private int price;              //가격
-    @Column(name="total_price",nullable = false)
-    private int totalPrice;         //총 가격
+    private int quantity; // 요청 수량
 
+    @Column(name = "part_id", nullable = false)
+    private long partId; // 부품 id
+
+    @Column(name = "part_name", nullable = false, length = 100)
+    private String partName; // 부품 이름
+
+    @Column(name = "part_code", nullable = false, length = 50)
+    private String partCode; // 부품 코드
+
+    @Column(nullable = false)
+    private int price; // 가격
+
+    @Column(name = "total_price", nullable = false)
+    private int totalPrice; // 총 가격
 
     @Builder
     public OrderItem(
-            PurchaseOrder purchaseOrder,
-            Long partId,
-            String partName,
-            String partCode,
-            int price,
-            int quantity)
-    {
-        validate(price,quantity);
+            PurchaseOrder purchaseOrder, Long partId, String partName, String partCode, int price, int quantity) {
+        validate(price, quantity);
         validateInventoryInfo(partName, partCode);
         this.purchaseOrder = purchaseOrder;
         this.partId = partId;
@@ -57,30 +55,30 @@ public class OrderItem {
         this.totalPrice = calculateTotalPrice();
     }
 
-    //총액 계산
-    private int calculateTotalPrice(){
+    // 총액 계산
+    private int calculateTotalPrice() {
         return price * quantity;
     }
 
-    //총액 재계산(수량이 변경됐을 경우)
-    public void changeQuantity(int newQuantity){
-        if(newQuantity <= 0){
+    // 총액 재계산(수량이 변경됐을 경우)
+    public void changeQuantity(int newQuantity) {
+        if (newQuantity <= 0) {
             throw new IllegalArgumentException("수량은 1개 이상이여야 합니다.");
         }
         this.quantity = newQuantity;
         this.totalPrice = calculateTotalPrice();
     }
 
-    //수량, 가격 유효성 검사
-    private void validate(int price, int quantity){
-        if(quantity <= 0){
+    // 수량, 가격 유효성 검사
+    private void validate(int price, int quantity) {
+        if (quantity <= 0) {
             throw new IllegalArgumentException("수량은 1개 이상이여야 합니다.");
         }
-        if(price < 0){
+        if (price < 0) {
             throw new IllegalArgumentException("단가는 음수일 수 없습니다.");
         }
     }
-    //재고 정보 유효성 검사
+    // 재고 정보 유효성 검사
     private void validateInventoryInfo(String name, String code) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("부품 이름은 필수입니다.");
@@ -89,5 +87,4 @@ public class OrderItem {
             throw new IllegalArgumentException("부품 코드는 필수입니다.");
         }
     }
-
 }

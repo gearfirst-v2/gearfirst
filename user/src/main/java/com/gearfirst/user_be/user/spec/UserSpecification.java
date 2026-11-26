@@ -13,14 +13,12 @@ public class UserSpecification {
 
     // WorkType 검색 조건
     private static Specification<UserEntity> byWorkType(Long workTypeId) {
-        return (root, query, cb) ->
-                cb.equal(root.get("workType").get("id"), workTypeId);
+        return (root, query, cb) -> cb.equal(root.get("workType").get("id"), workTypeId);
     }
 
     // Region 검색 조건
     private static Specification<UserEntity> byRegion(Long regionId) {
-        return (root, query, cb) ->
-                cb.equal(root.get("region").get("id"), regionId);
+        return (root, query, cb) -> cb.equal(root.get("region").get("id"), regionId);
     }
 
     // name, phoneNum, email OR 검색
@@ -30,8 +28,7 @@ public class UserSpecification {
             return cb.or(
                     cb.like(root.get("name"), likePattern),
                     cb.like(root.get("phoneNum"), likePattern),
-                    cb.like(root.get("email"), likePattern)
-            );
+                    cb.like(root.get("email"), likePattern));
         };
     }
 
@@ -39,14 +36,10 @@ public class UserSpecification {
     public static Specification<UserEntity> build(Rank rank, Long workTypeId, Long regionId, String keyword) {
         Specification<UserEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
-        if (rank != null)
-            spec = spec.and(byRank(rank));
-        if (workTypeId != null)
-            spec = spec.and(byWorkType(workTypeId));
-        if (regionId != null)
-            spec = spec.and(byRegion(regionId));
-        if (keyword != null && !keyword.isEmpty())
-            spec = spec.and(byKeyword(keyword));
+        if (rank != null) spec = spec.and(byRank(rank));
+        if (workTypeId != null) spec = spec.and(byWorkType(workTypeId));
+        if (regionId != null) spec = spec.and(byRegion(regionId));
+        if (keyword != null && !keyword.isEmpty()) spec = spec.and(byKeyword(keyword));
 
         return spec;
     }

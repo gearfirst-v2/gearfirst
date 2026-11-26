@@ -1,5 +1,7 @@
 package com.gearfirst.backend.api.order.repository;
 
+import static org.springframework.util.StringUtils.hasText;
+
 import com.gearfirst.backend.api.order.entity.PurchaseOrder;
 import com.gearfirst.backend.api.order.entity.QOrderItem;
 import com.gearfirst.backend.api.order.entity.QPurchaseOrder;
@@ -10,6 +12,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,37 +21,33 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.springframework.util.StringUtils.hasText;
-
-//QueryDSL 전용 커스텀 Repository
+// QueryDSL 전용 커스텀 Repository
 @Repository
 @RequiredArgsConstructor
 public class PurchaseOrderQueryRepository {
     private final JPAQueryFactory query;
 
     public Page<PurchaseOrder> searchOrders(
-            LocalDate startDate, LocalDate endDate,
+            LocalDate startDate,
+            LocalDate endDate,
             String searchKeyword,
             List<OrderStatus> statuses,
-            Pageable pageable
-    ) {
+            Pageable pageable) {
         QPurchaseOrder purchaseOrder = QPurchaseOrder.purchaseOrder;
         QOrderItem orderItem = QOrderItem.orderItem;
-        //동적 조건(필터)을 누적할 때 쓰는 가변형 조건 컨테이너
-        //내부적으로 논리식을 담고 있고 and(), or() 등으로 조건을 누적할 수 있음
+        // 동적 조건(필터)을 누적할 때 쓰는 가변형 조건 컨테이너
+        // 내부적으로 논리식을 담고 있고 and(), or() 등으로 조건을 누적할 수 있음
         BooleanBuilder where = new BooleanBuilder();
 
-        //상태 조건
+        // 상태 조건
         if (statuses != null && !statuses.isEmpty()) {
             where.and(purchaseOrder.status.in(statuses));
         }
 
-        if(startDate != null) where.and(purchaseOrder.requestDate.goe(startDate.atStartOfDay())); //requestDate >= startDate
-        if(endDate != null) where.and(purchaseOrder.requestDate.loe(endDate.atTime(23,59,59))); //requestDate <= endDate 23:59:59
+        if (startDate != null)
+            where.and(purchaseOrder.requestDate.goe(startDate.atStartOfDay())); // requestDate >= startDate
+        if (endDate != null)
+            where.and(purchaseOrder.requestDate.loe(endDate.atTime(23, 59, 59))); // requestDate <= endDate 23:59:59
 
         // 검색창 하나 → destinationCode OR orderNumber
         if (hasText(searchKeyword)) {
@@ -57,24 +57,22 @@ public class PurchaseOrderQueryRepository {
             keyword.or(purchaseOrder.orderNumber.containsIgnoreCase(searchKeyword));
             where.and(keyword);
         }
-        List<PurchaseOrder> content = query
-                .selectDistinct(purchaseOrder) //1:N 조인 시 중복 제거
-                .from(orderItem)        //기준 테이블
+        List<PurchaseOrder> content = query.selectDistinct(purchaseOrder) // 1:N 조인 시 중복 제거
+                .from(orderItem) // 기준 테이블
                 .join(orderItem.purchaseOrder, purchaseOrder)
                 .where(where)
                 .orderBy(toOrderSpecifiers(pageable.getSort(), purchaseOrder))
-                .offset(pageable.getOffset())  //pageable의 정렬을 QueryDSL OrderSpecifier로 변환
+                .offset(pageable.getOffset()) // pageable의 정렬을 QueryDSL OrderSpecifier로 변환
                 .limit(pageable.getPageSize())
                 .fetch();
-        //총 개수 조회
-        Long total = query
-                .select(purchaseOrder.countDistinct()) //중복 제거 카운트
+        // 총 개수 조회
+        Long total = query.select(purchaseOrder.countDistinct()) // 중복 제거 카운트
                 .from(orderItem)
                 .join(orderItem.purchaseOrder, purchaseOrder)
                 .where(where)
                 .fetchOne();
 
-        //PageImpl로 스프링 페이지 결과 생성
+        // PageImpl로 스프링 페이지 결과 생성
         return new PageImpl<>(content, pageable, total != null ? total : 0);
     }
 
@@ -84,17 +82,16 @@ public class PurchaseOrderQueryRepository {
 
         // sort 비어 있을 경우 기본 정렬 지정 (예: id 내림차순)
         if (sort.isEmpty()) {
-            return new OrderSpecifier[]{ new OrderSpecifier<>(Order.DESC, purchaseOrder.id) };
+            return new OrderSpecifier[] {new OrderSpecifier<>(Order.DESC, purchaseOrder.id)};
         }
         return sort.stream()
-                .filter(order -> order.getProperty() != null && !order.getProperty().isBlank()) //빈 문자열 필터링
+                .filter(order ->
+                        order.getProperty() != null && !order.getProperty().isBlank()) // 빈 문자열 필터링
                 .map(order -> {
                     Order direction = order.isAscending() ? Order.ASC : Order.DESC;
-                    ComparableExpression<?> sortExpr =
-                            entityPath.getComparable(order.getProperty(), Comparable.class);
+                    ComparableExpression<?> sortExpr = entityPath.getComparable(order.getProperty(), Comparable.class);
                     return new OrderSpecifier<>(direction, sortExpr);
                 })
                 .toArray(OrderSpecifier[]::new);
     }
-
 }

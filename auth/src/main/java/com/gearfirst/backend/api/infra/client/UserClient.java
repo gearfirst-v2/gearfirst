@@ -1,7 +1,5 @@
 package com.gearfirst.backend.api.infra.client;
 
-import com.gearfirst.backend.api.infra.dto.UserLoginResponse;
-import com.gearfirst.backend.api.infra.dto.UserProfileRequest;
 import com.gearfirst.backend.api.infra.dto.UserResponse;
 import com.gearfirst.backend.common.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @FeignClient(name = "user-service", url = "${user-service.url}")
 public interface UserClient {
-    //토큰 발급시
+    // 토큰 발급시
     @GetMapping("/api/v1/getUser")
     ApiResponse<UserResponse> getUser(@RequestParam Long userId);
-
 }

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class QuerydslConfig {
     @PersistenceContext
-    private EntityManager em; //JPA의 EntityManager를 주입받음
+    private EntityManager em; // JPA의 EntityManager를 주입받음
 
     /**
      * QueryDSL의 핵심 객체

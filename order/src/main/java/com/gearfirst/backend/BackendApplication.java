@@ -12,8 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients(basePackages = "com.gearfirst.backend.api.order.infra.client")
 public class BackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(BackendApplication.class, args);
+    }
 }

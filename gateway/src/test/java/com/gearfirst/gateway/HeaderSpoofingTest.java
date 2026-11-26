@@ -1,5 +1,13 @@
 package com.gearfirst.gateway;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
+import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,15 +26,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-
 /**
  * GEA-8: 클라이언트가 X-User-* 헤더를 직접 보내 다른 사용자나 본사 권한으로 행세하는 공격.
  * user·order는 gateway가 넘겨준 X-User-* 헤더만 믿으므로, gateway가 막아야 한다.
@@ -34,13 +33,13 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                // 실제 서비스 대신 아래 EchoController로 보내, 다운스트림이 받은 헤더를 확인한다
-                "spring.cloud.gateway.server.webflux.routes[0].id=test-public",
-                "spring.cloud.gateway.server.webflux.routes[0].uri=forward:/test-echo",
-                "spring.cloud.gateway.server.webflux.routes[0].predicates[0]=Path=/auth/**",
-                "spring.cloud.gateway.server.webflux.routes[1].id=test-protected",
-                "spring.cloud.gateway.server.webflux.routes[1].uri=forward:/test-echo",
-                "spring.cloud.gateway.server.webflux.routes[1].predicates[0]=Path=/echo-protected/**"
+            // 실제 서비스 대신 아래 EchoController로 보내, 다운스트림이 받은 헤더를 확인한다
+            "spring.cloud.gateway.server.webflux.routes[0].id=test-public",
+            "spring.cloud.gateway.server.webflux.routes[0].uri=forward:/test-echo",
+            "spring.cloud.gateway.server.webflux.routes[0].predicates[0]=Path=/auth/**",
+            "spring.cloud.gateway.server.webflux.routes[1].id=test-protected",
+            "spring.cloud.gateway.server.webflux.routes[1].uri=forward:/test-echo",
+            "spring.cloud.gateway.server.webflux.routes[1].predicates[0]=Path=/echo-protected/**"
         })
 @Import(HeaderSpoofingTest.EchoController.class)
 class HeaderSpoofingTest {
@@ -56,53 +55,60 @@ class HeaderSpoofingTest {
     @BeforeEach
     void setUp() {
         given(jwtDecoder.decode(anyString())).willReturn(Mono.error(new BadJwtException("invalid")));
-        given(jwtDecoder.decode("valid-token")).willReturn(Mono.just(Jwt.withTokenValue("valid-token")
-                .header("alg", "RS256")
-                .subject("1")
-                .claim("name", "본사테스트")
-                .claim("rank", "팀장")
-                .claim("region", "서울")
-                .claim("work_type", "본사")
-                .build()));
+        given(jwtDecoder.decode("valid-token"))
+                .willReturn(Mono.just(Jwt.withTokenValue("valid-token")
+                        .header("alg", "RS256")
+                        .subject("1")
+                        .claim("name", "본사테스트")
+                        .claim("rank", "팀장")
+                        .claim("region", "서울")
+                        .claim("work_type", "본사")
+                        .build()));
     }
 
     @Test
     @DisplayName("토큰 없이 위조 헤더로 user /me를 부르면 401 (A1)")
     void spoofedHeadersWithoutTokenToUser() {
-        client.get().uri("/user/api/v1/me")
+        client.get()
+                .uri("/user/api/v1/me")
                 .header("X-User-Id", "1")
                 .header("X-User-WorkType", HQ)
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
     }
 
     @Test
     @DisplayName("토큰 없이 전체 사용자 목록을 부르면 401 (A2)")
     void userListWithoutToken() {
-        client.get().uri("/user/api/v1/getAllUser")
-                .exchange()
-                .expectStatus().isUnauthorized();
+        client.get().uri("/user/api/v1/getAllUser").exchange().expectStatus().isUnauthorized();
     }
 
     @Test
     @DisplayName("토큰 없이 위조 헤더(본사)로 본사 전용 발주 목록을 부르면 401 (A1)")
     void spoofedHeadersWithoutTokenToOrder() {
-        client.get().uri("/order/api/v1/purchase-orders/head/orders/pending")
+        client.get()
+                .uri("/order/api/v1/purchase-orders/head/orders/pending")
                 .header("X-User-Id", "1")
                 .header("X-User-WorkType", HQ)
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
     }
 
     @Test
     @DisplayName("공개 경로로 보낸 위조 X-User-* 헤더는 다운스트림에 전달되지 않는다")
     void spoofedHeadersAreStrippedOnPublicPath() {
-        Map<String, String> received = client.get().uri("/auth/login")
+        Map<String, String> received = client.get()
+                .uri("/auth/login")
                 .header("X-User-Id", "1")
                 .header("X-User-WorkType", HQ)
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody(EchoController.HEADERS).returnResult().getResponseBody();
+                .expectStatus()
+                .isOk()
+                .expectBody(EchoController.HEADERS)
+                .returnResult()
+                .getResponseBody();
 
         assertThat(received).isEmpty();
     }
@@ -110,13 +116,17 @@ class HeaderSpoofingTest {
     @Test
     @DisplayName("토큰이 있으면 X-User-* 헤더는 토큰 클레임으로만 채워지고, 위조한 값은 남지 않는다")
     void headersComeOnlyFromToken() {
-        Map<String, String> received = client.get().uri("/echo-protected")
+        Map<String, String> received = client.get()
+                .uri("/echo-protected")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer valid-token")
                 .header("X-User-Id", "999")
                 .header("X-User-Role", "ADMIN") // 필터가 채우지 않는 이름도 지워져야 한다
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody(EchoController.HEADERS).returnResult().getResponseBody();
+                .expectStatus()
+                .isOk()
+                .expectBody(EchoController.HEADERS)
+                .returnResult()
+                .getResponseBody();
 
         assertThat(received)
                 .containsEntry("x-user-id", "1")
@@ -127,10 +137,12 @@ class HeaderSpoofingTest {
     @Test
     @DisplayName("잘못된 토큰이면 401")
     void invalidToken() {
-        client.get().uri("/echo-protected")
+        client.get()
+                .uri("/echo-protected")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer forged")
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .isUnauthorized();
     }
 
     private static String base64(String s) {

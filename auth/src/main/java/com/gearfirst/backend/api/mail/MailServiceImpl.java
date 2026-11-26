@@ -2,14 +2,13 @@ package com.gearfirst.backend.api.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @Service
@@ -18,10 +17,10 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
 
     @Value("${mail.sender.address}")
-    private String senderAddress;   //  Gmail 주소 (spring.mail.username)
+    private String senderAddress; //  Gmail 주소 (spring.mail.username)
 
     @Value("${mail.sender.name}")
-    private String senderName;      //  표시 이름 (“GearFirst 운영팀”)
+    private String senderName; //  표시 이름 (“GearFirst 운영팀”)
 
     @Override
     public void sendUserRegistrationMail(String toEmail, String tempPassword) {
@@ -36,12 +35,12 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
 
         } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new RuntimeException("이메일 전송 실패: " + e.getMessage(),e);
+            throw new RuntimeException("이메일 전송 실패: " + e.getMessage(), e);
         }
     }
 
-private String buildMailContent(String tempPassword) {
-    return """
+    private String buildMailContent(String tempPassword) {
+        return """
         <div style="max-width:600px;margin:30px auto;padding:30px;
                     font-family:'Segoe UI',Arial,sans-serif;
                     background-color:#f9f9f9;border-radius:10px;
@@ -78,7 +77,7 @@ private String buildMailContent(String tempPassword) {
                 ⓒ 2025 GearFirst. All rights reserved.
             </p>
         </div>
-    """.formatted(tempPassword);
-}
-
+    """
+                .formatted(tempPassword);
+    }
 }

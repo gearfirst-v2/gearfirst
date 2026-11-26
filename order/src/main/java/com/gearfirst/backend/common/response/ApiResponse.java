@@ -15,7 +15,7 @@ public class ApiResponse<T> {
     private T data;
 
     /** SUCCESS */
-    public static <T>ResponseEntity<ApiResponse<T>> success(SuccessStatus status, T data) {
+    public static <T> ResponseEntity<ApiResponse<T>> success(SuccessStatus status, T data) {
         ApiResponse<T> response = ApiResponse.<T>builder()
                 .status(status.getStatusCode())
                 .success(true)

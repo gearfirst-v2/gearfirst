@@ -1,6 +1,7 @@
 package com.gearfirst.backend.common.config.kafka;
 
 import com.gearfirst.backend.api.order.dto.NotificationDto;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +11,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import java.util.Map;
-
 @Configuration
 @RequiredArgsConstructor
 public class KafkaConsumerConfig {
@@ -19,7 +18,8 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, NotificationDto> testKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, NotificationDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, NotificationDto> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(testConsumerFactory());
         return factory;
@@ -38,7 +38,6 @@ public class KafkaConsumerConfig {
 
                 // Value(메시지 내용)는 OrderDto.class로만 변환하고,
                 // 타입 헤더(__TypeId__)는 무시(false)합니다.
-                new JsonDeserializer<>(NotificationDto.class, false)
-        );
+                new JsonDeserializer<>(NotificationDto.class, false));
     }
 }

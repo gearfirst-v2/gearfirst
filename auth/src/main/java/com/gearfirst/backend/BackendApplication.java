@@ -8,8 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(basePackages = "com.gearfirst.backend.api.infra.client")
 public class BackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(BackendApplication.class, args);
+    }
 }

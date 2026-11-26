@@ -13,5 +13,7 @@ public enum Rank {
 
     private final String status;
 
-    Rank(String status) {this.status = status;}
+    Rank(String status) {
+        this.status = status;
+    }
 }

@@ -15,5 +15,4 @@ public class OrderItemRequest {
     private String partCode;
     private int price;
     private int quantity;
-
 }
