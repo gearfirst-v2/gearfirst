@@ -11,4 +11,3 @@ public class BadRequestException extends BaseException {
         super(HttpStatus.BAD_REQUEST, message);
     }
 }
-

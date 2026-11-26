@@ -24,8 +24,9 @@ public class ForwardedHeaderLoggingFilter implements WebFilter {
         String method = exchange.getRequest().getMethod().toString();
         String path = exchange.getRequest().getURI().getPath();
         String query = exchange.getRequest().getURI().getQuery();
-        String remoteAddr = exchange.getRequest().getRemoteAddress().getAddress() != null ?
-                exchange.getRequest().getRemoteAddress().getAddress().getHostAddress() : "unknown";
+        String remoteAddr = exchange.getRequest().getRemoteAddress().getAddress() != null
+                ? exchange.getRequest().getRemoteAddress().getAddress().getHostAddress()
+                : "unknown";
 
         if (path.startsWith("/actuator/health") || path.startsWith("/notification")) {
             return chain.filter(exchange);

@@ -34,8 +34,7 @@ public class KafkaConfig {
      */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<?, ?> kafkaListenerContainerFactory(
-            ConcurrentKafkaListenerContainerFactory<?, ?> factory,
-            DefaultErrorHandler errorHandler) {
+            ConcurrentKafkaListenerContainerFactory<?, ?> factory, DefaultErrorHandler errorHandler) {
         factory.setCommonErrorHandler(errorHandler);
         return factory;
     }

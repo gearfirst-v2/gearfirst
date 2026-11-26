@@ -2,13 +2,13 @@ package com.gearfirst.backend.api.schedule.entity;
 
 import com.gearfirst.backend.api.schedule.enums.TaskStatus;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Table(name = "scheduled_task")
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +19,7 @@ public class ScheduledTask {
 
     @Column(unique = true)
     private Long orderId;
+
     private LocalDateTime runAt;
 
     @Enumerated(EnumType.STRING)
@@ -27,5 +28,3 @@ public class ScheduledTask {
     private int retryCount = 0;
     private String errorMessage;
 }
-
-

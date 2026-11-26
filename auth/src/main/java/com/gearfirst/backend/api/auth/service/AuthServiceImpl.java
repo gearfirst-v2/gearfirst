@@ -8,6 +8,7 @@ import com.gearfirst.backend.api.mail.MailService;
 import com.gearfirst.backend.common.exception.KnownBusinessException;
 import com.gearfirst.backend.common.exception.NotFoundException;
 import com.gearfirst.backend.common.response.ErrorStatus;
+import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,12 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.security.SecureRandom;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthRepository authRepository;
     private final MailService mailService;
@@ -32,13 +31,13 @@ public class AuthServiceImpl implements AuthService{
     public void createAccount(CreateAccount request) {
         String tempPassword = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
         String encodedPassword = passwordEncoder.encode(tempPassword);
-        //log.info("tempPassword: {}", tempPassword);
+        // log.info("tempPassword: {}", tempPassword);
 
         // 이메일 중복 체크
-        if(authRepository.findByEmail(request.getEmail()).isPresent()){
+        if (authRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new KnownBusinessException(ErrorStatus.DUPLICATE_EMAIL_EXCEPTION.getMessage());
         }
-        if(request.getUserId() == null){
+        if (request.getUserId() == null) {
             throw new KnownBusinessException(ErrorStatus.ESSENTIAL_USERID_EXCEPTION.getMessage());
         }
 
@@ -49,16 +48,19 @@ public class AuthServiceImpl implements AuthService{
                 .build();
         authRepository.save(auth);
 
-        if(TransactionSynchronizationManager.isSynchronizationActive()) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    try{
+                    try {
                         mailService.sendUserRegistrationMail(request.getPersonalEmail(), tempPassword);
-                    }catch (Exception e) {
-                        log.error("메일 발송 실패 - personalEmail={}, message={}", request.getPersonalEmail(), e.getMessage(), e);
+                    } catch (Exception e) {
+                        log.error(
+                                "메일 발송 실패 - personalEmail={}, message={}",
+                                request.getPersonalEmail(),
+                                e.getMessage(),
+                                e);
                     }
-
                 }
             });
         } else {
@@ -69,10 +71,11 @@ public class AuthServiceImpl implements AuthService{
     @Transactional
     @Override
     public void changePassword(ChangePasswordRequest request) {
-        Auth auth = authRepository.findByUserId(request.getUserId())
+        Auth auth = authRepository
+                .findByUserId(request.getUserId())
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
         auth.verifyPassword(request.getCurrentPassword(), passwordEncoder);
-        if(!request.getNewPassword().equals(request.getConfirmPassword())){
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new KnownBusinessException("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
         auth.changePassword(request.getNewPassword(), passwordEncoder);
@@ -80,8 +83,9 @@ public class AuthServiceImpl implements AuthService{
 
     @Transactional
     @Override
-    public void regenerateTempPassword(String email,String personalEmail) {
-        Auth auth = authRepository.findByEmail(email)
+    public void regenerateTempPassword(String email, String personalEmail) {
+        Auth auth = authRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
         // 새 임시 비밀번호 생성
         String newTempPassword = RandomStringUtils.random(10, 0, 0, true, true, null, new SecureRandom());
@@ -105,7 +109,8 @@ public class AuthServiceImpl implements AuthService{
     @Transactional
     @Override
     public void deleteUser(Long userId) {
-        Auth auth = authRepository.findByUserId(userId)
+        Auth auth = authRepository
+                .findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         authRepository.delete(auth);

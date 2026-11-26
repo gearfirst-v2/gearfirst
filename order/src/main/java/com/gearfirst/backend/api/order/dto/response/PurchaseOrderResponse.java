@@ -2,13 +2,12 @@ package com.gearfirst.backend.api.order.dto.response;
 
 import com.gearfirst.backend.api.order.entity.OrderItem;
 import com.gearfirst.backend.api.order.entity.PurchaseOrder;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -27,9 +26,7 @@ public class PurchaseOrderResponse {
                 .orderNumber(order.getOrderNumber())
                 .totalQuantity(order.getTotalQuantity())
                 .orderStatus(order.getStatus().name())
-                .items(items.stream()
-                        .map(OrderItemResponse::from)
-                        .collect(Collectors.toList()))
+                .items(items.stream().map(OrderItemResponse::from).collect(Collectors.toList()))
                 .build();
     }
 }

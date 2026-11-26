@@ -39,15 +39,16 @@ public class JwtCustomizerConfig {
                 String email = principal.getName();
 
                 // authRepository에서 사용자 찾기
-                Auth auth = authRepository.findByEmail(email)
+                Auth auth = authRepository
+                        .findByEmail(email)
                         .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
                 Long userId = auth.getUserId();
 
                 //  User 서버 호출 (ApiResponse로 받기)
                 ApiResponse<UserResponse> response = userClient.getUser(userId);
 
-                //User에서 응답이 실패할경우 대비
-                if(!response.isSuccess() || response.getData() == null){
+                // User에서 응답이 실패할경우 대비
+                if (!response.isSuccess() || response.getData() == null) {
                     throw new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage());
                 }
                 //  ApiResponse에서 실제 UserResponse 객체 꺼내기
@@ -56,7 +57,7 @@ public class JwtCustomizerConfig {
                 //  클레임에 커스텀 값 추가
                 context.getClaims().claim("sub", user.getId());
                 context.getClaims().claim("name", user.getName());
-                context.getClaims().claim("rank",user.getRank());
+                context.getClaims().claim("rank", user.getRank());
                 context.getClaims().claim("region", user.getRegion());
                 context.getClaims().claim("work_type", user.getWorkType());
             }

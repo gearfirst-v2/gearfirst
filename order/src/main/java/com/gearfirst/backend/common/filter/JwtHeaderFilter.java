@@ -6,20 +6,20 @@ import com.gearfirst.backend.common.exception.BadRequestException;
 import com.gearfirst.backend.common.response.ErrorStatus;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtHeaderFilter implements Filter {
 
-    //실제 요청 처리흐름을 가로 채는 메서드
+    // 실제 요청 처리흐름을 가로 채는 메서드
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        //ServletRequest를 HTTP 요청 객체로 다운캐스팅
-        //헤더를 읽기 위해 HttpServletRequest가 필요함
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
+        // ServletRequest를 HTTP 요청 객체로 다운캐스팅
+        // 헤더를 읽기 위해 HttpServletRequest가 필요함
         HttpServletRequest httpReq = (HttpServletRequest) servletRequest;
 
         String userId = httpReq.getHeader("X-User-Id");
@@ -38,6 +38,7 @@ public class JwtHeaderFilter implements Filter {
             UserContextHolder.clear();
         }
     }
+
     private String decode(String value) {
         if (value == null || value.isBlank()) {
             return null;
@@ -50,5 +51,4 @@ public class JwtHeaderFilter implements Filter {
             throw new BadRequestException(ErrorStatus.INVALID_USER_EXCEPTION.getMessage());
         }
     }
-
 }
