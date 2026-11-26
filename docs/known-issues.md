@@ -7,7 +7,7 @@
 |---|---|---|---|
 | A1 | gateway | 토큰 없이 `X-User-*` 헤더를 위조해 권한 획득 | 수정 완료(GEA-8) |
 | A2 | gateway | 토큰 없이 전체 사용자 목록 조회 | 수정 완료(GEA-8) |
-| A3 | infra | 서비스 포트에 직접 접근해 gateway 우회 | 수정 완료(GEA-8) |
+| A3 | infra | 서비스 포트에 직접 접근해 gateway 우회 (로컬 compose에서만 확인, 운영은 미확인) | 수정 완료(GEA-8) |
 | B1 | user | `registerUser`로 누구나 본사 팀장 계정 생성 | 코드 확인 |
 | B2 | user | `updateUser`/`deleteUser`에 인가 검사 없음 | 코드 확인 |
 | C1 | auth | `regenerate-temp-password`가 요청 body의 `personalEmail`로 임시 비밀번호 발송 → 계정 탈취 | 재현됨 |

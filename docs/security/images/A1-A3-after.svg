@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 560" width="780" height="560" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#393"/></marker>
+  </defs>
+<rect width="780" height="560" fill="#fff"/>
+  <text x="20" y="36" font-size="20" font-weight="700" fill="#393">고친 뒤</text>
+
+  <!-- client -->
+  <rect x="230" y="20" width="300" height="56" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <text x="380" y="43" font-size="15" font-weight="700" text-anchor="middle" fill="#222">클라이언트</text>
+  <text x="380" y="64" font-size="13" text-anchor="middle" fill="#d33">X-User-WorkType: 본사 (위조)</text>
+
+  <!-- gateway container -->
+  <rect x="40" y="104" width="560" height="270" rx="10" fill="none" stroke="#888" stroke-dasharray="6 4"/>
+  <text x="54" y="126" font-size="14" font-weight="700" fill="#666">gateway</text>
+
+  <line x1="380" y1="76" x2="380" y2="138" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="210" y="140" width="340" height="52" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <text x="380" y="161" font-size="14" font-weight="700" text-anchor="middle" fill="#222">SecurityConfig</text>
+  <text x="380" y="181" font-size="13" text-anchor="middle" fill="#222">/auth/**, health, info만 공개 · 나머지 토큰 필수</text>
+
+  <path d="M380,192 V216 H235 V242" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="245" y="236" font-size="13" fill="#555">검증 성공</text>
+  <path d="M380,216 H510 V242" fill="none" stroke="#393" stroke-width="2" marker-end="url(#g)"/>
+  <text x="520" y="236" font-size="13" fill="#393">토큰 없음 / 검증 실패</text>
+
+  <rect x="70" y="244" width="330" height="100" rx="8" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="235" y="268" font-size="14" font-weight="700" text-anchor="middle" fill="#222">JwtClaimsHeaderFilter</text>
+  <text x="235" y="294" font-size="13" text-anchor="middle" fill="#1f6e1f">① 들어온 X-User-* 전부 삭제 (A1)</text>
+  <text x="235" y="318" font-size="13" text-anchor="middle" fill="#1f6e1f">② 토큰 클레임으로 다시 채움</text>
+
+  <rect x="440" y="244" width="140" height="100" rx="8" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="510" y="290" font-size="22" font-weight="700" text-anchor="middle" fill="#1f6e1f">401</text>
+  <text x="510" y="314" font-size="13" text-anchor="middle" fill="#1f6e1f">차단 (A2)</text>
+
+  <!-- services -->
+  <line x1="235" y1="344" x2="235" y2="414" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="85" y="416" width="300" height="56" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <text x="235" y="439" font-size="15" font-weight="700" text-anchor="middle" fill="#222">user / order</text>
+  <text x="235" y="460" font-size="13" text-anchor="middle" fill="#222">토큰과 같은 값의 헤더만 도착</text>
+
+  <line x1="235" y1="472" x2="235" y2="496" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="85" y="498" width="300" height="44" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <text x="235" y="526" font-size="14" text-anchor="middle" fill="#222">위조 헤더는 반영되지 않음</text>
+
+  <!-- A3 blocked -->
+  <path d="M530,48 H660 V444 H440" fill="none" stroke="#999" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="413" y="453" font-size="26" font-weight="700" text-anchor="middle" fill="#393">✕</text>
+  <text x="672" y="230" font-size="13" font-weight="700" fill="#393">A3</text>
+  <text x="672" y="250" font-size="13" fill="#393">서비스 포트 없음</text>
+  <text x="672" y="268" font-size="13" fill="#393">연결 안 됨</text>
+</svg>

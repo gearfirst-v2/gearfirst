@@ -57,7 +57,9 @@ GearFirst v2: 부트캠프 팀 MSA 프로젝트 중 auth, user, order, gateway�
 ## 문서 규칙
 
 - 취약점을 고치면 `docs/known-issues.md`의 상태를 갱신해요.
-- 결정은 발견 → 선택지 → 선택 이유 → 포기한 것 → 증명(테스트·재현 결과) 순서로 기록해요. 여러 서비스에 영향을 주거나, 되돌리기 어렵거나, 선택지를 두고 고민한 결정은 `docs/adr/`에 새 파일로.
+- 결정은 발견 → 선택지 → 선택 이유 → 한계 → 증명(테스트·재현 결과) 순서로 기록해요.
+  - 취약점 수정: `docs/security/<라벨>-설명.md` (예: `C1-temp-password.md`)
+  - 구조 결정(여러 서비스에 영향, 되돌리기 어려움): `docs/adr/`에 다음 번호로
 - 진행 기록(Notion)은 사용자가 직접 써요.
 
 ## 언제 어떤 문서를 읽나
@@ -65,5 +67,5 @@ GearFirst v2: 부트캠프 팀 MSA 프로젝트 중 auth, user, order, gateway�
 필요할 때만 읽어요. 미리 다 읽지 마세요.
 
 - 서비스 간 호출·인증 흐름을 건드릴 때: `docs/architecture.md`
-- 취약점을 고치거나 공격 라벨을 쓸 때: `docs/known-issues.md`
+- 취약점을 고치거나 공격 라벨을 쓸 때: `docs/known-issues.md`, 이미 고친 건 `docs/security/`
 - 왜 이런 구조인지 궁금할 때(모노레포, 로컬 실행 방식): `docs/adr/`
