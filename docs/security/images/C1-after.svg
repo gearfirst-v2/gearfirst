@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 660" width="780" height="660" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" marker660eight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" marker660eight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d33"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" marker660eight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#393"/></marker>
+  </defs>
+<rect width="780" height="660" fill="#fff"/>
+  <text x="20" y="36" font-size="20" font-weight="700" fill="#393">고친 뒤</text>
+  <text x="20" y="60" font-size="13" fill="#555">임시 비밀번호는 가입 때 저장한 주소로만 가요</text>
+
+  <rect x="30" y="80" width="270" height="90" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <text x="165" y="104" font-size="15" font-weight="700" text-anchor="middle" fill="#222">가입할 때</text>
+  <text x="165" y="132" font-size="13" text-anchor="middle" fill="#222">인사 담당자가 개인 메일 입력</text>
+  <text x="165" y="156" font-size="13" text-anchor="middle" fill="#222">victim@gmail.com</text>
+
+  <rect x="330" y="80" width="420" height="90" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <text x="540" y="104" font-size="15" font-weight="700" text-anchor="middle" fill="#222">① 공격자가 같은 요청을 보냄</text>
+  <text x="350" y="132" font-size="13" fill="#555">누구 계정?</text>
+  <text x="455" y="132" font-size="13" fill="#222">victim@gearfirst.com</text>
+  <text x="350" y="156" font-size="13" fill="#555">어디로 보낼까?</text>
+  <text x="455" y="156" font-size="13" fill="#d33">attacker@evil.com → 서버가 안 읽음</text>
+
+  <rect x="20" y="210" width="740" height="244" rx="10" fill="none" stroke="#888" stroke-dasharray="6 4"/>
+  <text x="34" y="232" font-size="14" font-weight="700" fill="#666">서버 (auth)</text>
+
+  <line x1="165" y1="170" x2="165" y2="246" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="30" y="248" width="270" height="70" rx="8" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="165" y="276" font-size="14" font-weight="700" text-anchor="middle" fill="#222">저장된 개인 메일</text>
+  <text x="165" y="300" font-size="13" text-anchor="middle" fill="#1f6e1f">victim@gmail.com</text>
+
+  <line x1="540" y1="170" x2="540" y2="238" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="330" y="240" width="420" height="40" rx="6" fill="#f5f6f8" stroke="#555"/>
+  <text x="350" y="265" font-size="14" fill="#222">② "누구 계정?"으로 피해자 계정을 찾음</text>
+  <rect x="330" y="290" width="420" height="40" rx="6" fill="#f5f6f8" stroke="#555"/>
+  <text x="350" y="315" font-size="14" fill="#222">③ 새 임시 비밀번호를 만듦</text>
+  <rect x="330" y="340" width="420" height="40" rx="6" fill="#f5f6f8" stroke="#555"/>
+  <text x="350" y="365" font-size="14" fill="#222">④ 피해자 비밀번호를 이 값으로 바꿈</text>
+  <rect x="330" y="390" width="420" height="44" rx="6" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="350" y="417" font-size="14" font-weight="700" fill="#1f6e1f">⑤ 저장된 개인 메일로만 발송 ← 고친 곳</text>
+
+  <line x1="300" y1="300" x2="328" y2="406" stroke="#393" stroke-width="2" marker-end="url(#g)"/>
+
+  <line x1="420" y1="434" x2="240" y2="498" stroke="#393" stroke-width="2" marker-end="url(#g)"/>
+  <rect x="40" y="500" width="330" height="60" rx="8" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="205" y="525" font-size="14" font-weight="700" text-anchor="middle" fill="#222">⑥ 피해자 메일함에 도착</text>
+  <text x="205" y="547" font-size="13" text-anchor="middle" fill="#1f6e1f">비밀번호는 피해자 본인만 알아요</text>
+
+  <path d="M640,434 V498" fill="none" stroke="#999" stroke-width="2" stroke-dasharray="7 5"/>
+  <rect x="420" y="500" width="330" height="60" rx="8" fill="#f5f6f8" stroke="#999" stroke-dasharray="6 4"/>
+  <text x="585" y="525" font-size="14" font-weight="700" text-anchor="middle" fill="#222">공격자 메일함</text>
+  <text x="585" y="547" font-size="13" text-anchor="middle" fill="#393">✕ 아무것도 오지 않아요</text>
+
+  <text x="40" y="600" font-size="13" fill="#777">남은 문제(C6): ④는 그대로라서, 누구든 요청만으로 피해자 비밀번호를 바꿀 수 있어요.</text>
+  <text x="40" y="622" font-size="13" fill="#777">피해자는 메일로 온 새 비밀번호로 다시 로그인해야 해요. → 재설정 링크 방식으로 따로 고쳐요.</text>
+</svg>

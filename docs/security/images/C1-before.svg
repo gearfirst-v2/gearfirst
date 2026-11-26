@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 650" width="780" height="650" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" marker650eight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" marker650eight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d33"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" marker650eight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#393"/></marker>
+  </defs>
+<rect width="780" height="650" fill="#fff"/>
+  <text x="20" y="36" font-size="20" font-weight="700" fill="#d33">고치기 전</text>
+  <text x="20" y="60" font-size="13" fill="#555">공격자는 피해자의 회사 이메일만 알면 돼요</text>
+
+  <rect x="120" y="80" width="540" height="90" rx="8" fill="#fdecec" stroke="#d33" stroke-width="2"/>
+  <text x="390" y="104" font-size="15" font-weight="700" text-anchor="middle" fill="#222">① 공격자가 임시 비밀번호 재발급을 요청 (로그인 없이)</text>
+  <text x="150" y="132" font-size="13" fill="#555">누구 계정?</text>
+  <text x="270" y="132" font-size="13" fill="#222">victim@gearfirst.com (피해자 회사 이메일)</text>
+  <text x="150" y="156" font-size="13" fill="#555">어디로 보낼까?</text>
+  <text x="270" y="156" font-size="13" font-weight="700" fill="#d33">attacker@evil.com (공격자 메일)</text>
+
+  <line x1="390" y1="170" x2="390" y2="210" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <text x="400" y="195" font-size="13" fill="#555">gateway도 auth도 로그인 검사 없이 통과</text>
+
+  <rect x="60" y="212" width="660" height="238" rx="10" fill="none" stroke="#888" stroke-dasharray="6 4"/>
+  <text x="74" y="234" font-size="14" font-weight="700" fill="#666">서버 (auth)</text>
+
+  <rect x="120" y="242" width="540" height="40" rx="6" fill="#f5f6f8" stroke="#555"/>
+  <text x="140" y="267" font-size="14" fill="#222">② "누구 계정?"으로 피해자 계정을 찾음</text>
+  <rect x="120" y="292" width="540" height="40" rx="6" fill="#f5f6f8" stroke="#555"/>
+  <text x="140" y="317" font-size="14" fill="#222">③ 새 임시 비밀번호를 만듦 (예: a8Kd2pQ9xZ)</text>
+  <rect x="120" y="342" width="540" height="40" rx="6" fill="#f5f6f8" stroke="#555"/>
+  <text x="140" y="367" font-size="14" fill="#222">④ 피해자 비밀번호를 이 값으로 바꿈 (원래 비밀번호는 무효)</text>
+  <rect x="120" y="392" width="540" height="40" rx="6" fill="#fdecec" stroke="#d33" stroke-width="2"/>
+  <text x="140" y="417" font-size="14" font-weight="700" fill="#d33">⑤ "어디로 보낼까?"에 적힌 주소로 메일 발송 ← 문제</text>
+
+  <line x1="390" y1="450" x2="390" y2="490" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+
+  <rect x="120" y="492" width="540" height="50" rx="8" fill="#fdecec" stroke="#d33" stroke-width="2"/>
+  <text x="390" y="522" font-size="14" font-weight="700" text-anchor="middle" fill="#222">⑥ 공격자 메일함에 피해자의 임시 비밀번호가 도착</text>
+  <line x1="390" y1="542" x2="390" y2="572" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <rect x="120" y="574" width="540" height="50" rx="8" fill="#fdecec" stroke="#d33" stroke-width="2"/>
+  <text x="390" y="604" font-size="14" font-weight="700" text-anchor="middle" fill="#d33">⑦ 공격자가 그 비밀번호로 피해자 계정에 로그인 → 계정 탈취</text>
+</svg>
