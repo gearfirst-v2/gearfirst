@@ -16,6 +16,8 @@
 | C4 | auth | 로그인 폼 CSRF 비활성화 | 재현됨 |
 | C5 | auth | 기본 계정 `test@gearfirst.com`/`1234`, client secret `"secret"` 하드코딩 | 코드 확인 |
 | C6 | auth | `regenerate-temp-password` 요청만으로 남의 비밀번호가 즉시 바뀜 → 계정 잠금, 메일 폭탄 (C1 한계, `docs/security/C1-temp-password.md`) | 코드 확인 |
+| C7 | auth | `change-password` 잠금의 실패 횟수를 동시 요청이 서로 덮어써서 5번보다 많이 대입 가능(그 사람의 토큰 필요, GEA-13 한계) | 코드 확인 |
+| C8 | auth | 로그인 폼에 시도 제한이 없어 비밀번호 무차별 대입 가능. BCrypt 계산이 몰리면 정상 로그인도 느려짐 | 코드 확인 |
 | D1 | infra | auth, user, order가 postgres 계정 하나를 공유 | 코드 확인 |
 | E1 | auth | JWK 서명 키와 인가 저장소가 메모리에만 있음(재시작하면 토큰 무효, 다중 인스턴스 불가) | 코드 확인 |
 | E2 | gateway | 원본 JWT 헤더·페이로드를 ERROR 로그로 출력 | 재현됨 |
@@ -36,3 +38,4 @@
 3. E1
 4. D1
 5. C4, C5, E2
+6. C7, C8 (k6 기준선 뒤 성능 사례로 측정하며 고침, GCP 배포 전 필수)
