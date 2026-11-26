@@ -13,6 +13,7 @@ GearFirst v2: 부트캠프 팀 MSA 프로젝트 중 auth, user, order, gateway�
 
 - 전체: 루트에서 `./gradlew build` (컴파일 + 테스트 + jar). 서비스 하나만: 그 폴더에서 `./gradlew build`. Gradle은 모두 9.1.0이에요.
 - Java 21이 필요해요. 로컬 기본 Java는 26이에요. `JAVA_HOME`이 21이 아니면 명령 앞에 `JAVA_HOME=$(/usr/libexec/java_home -v 21)`을 붙여요.
+- 커밋 전 `./gradlew spotlessApply`로 포맷을 맞춰요(palantir-java-format). 포맷이 틀리면 CI의 `spotlessCheck`가 실패해요.
 - 테스트 하나만(서비스 폴더에서): `./gradlew test --tests 'com.gearfirst.gateway.HeaderSpoofingTest'`
 - 테스트는 H2를 써요(DB 없이 실행). 설정은 서비스별 `src/test/resources/application.yml`.
 - 로컬 실행: `cd infra && docker compose up -d --build`. 외부 진입점은 gateway(8080) 하나, 메일은 Mailpit(8025).

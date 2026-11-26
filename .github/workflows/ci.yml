@@ -43,6 +43,7 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew spotlessCheck # 포맷이 틀리면 여기서 실패 (고치기: ./gradlew spotlessApply)
       - run: ./gradlew build # 컴파일 + 테스트 + jar
 
   # 브랜치 보호의 필수 체크용. build는 matrix라 이름이 바뀌고 skip되기도 해서, 항상 도는 job 하나로 결과를 모은다.
