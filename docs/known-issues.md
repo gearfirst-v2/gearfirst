@@ -11,8 +11,8 @@
 | B1 | user | `registerUser`로 누구나 본사 팀장 계정 생성 | 코드 확인 |
 | B2 | user | `updateUser`/`deleteUser`에 인가 검사 없음 | 코드 확인 |
 | C1 | auth | `regenerate-temp-password`가 요청 body의 `personalEmail`로 임시 비밀번호 발송 → 계정 탈취 | 수정 완료(GEA-12) |
-| C2 | auth | `/api/v1/auth/delete`가 permitAll | 코드 확인 |
-| C3 | auth | `change-password`가 body의 `userId`를 믿고, 무차별 대입 제한 없음 | 코드 확인 |
+| C2 | auth | `/api/v1/auth/delete`가 permitAll (같은 원인으로 `signup`도 열려 있어 delete와 엮으면 계정 탈취) | 수정 완료(GEA-13) |
+| C3 | auth | `change-password`가 body의 `userId`를 믿고, 무차별 대입 제한 없음 | 수정 완료(GEA-13) |
 | C4 | auth | 로그인 폼 CSRF 비활성화 | 재현됨 |
 | C5 | auth | 기본 계정 `test@gearfirst.com`/`1234`, client secret `"secret"` 하드코딩 | 코드 확인 |
 | C6 | auth | `regenerate-temp-password` 요청만으로 남의 비밀번호가 즉시 바뀜 → 계정 잠금, 메일 폭탄 (C1 한계, `docs/security/C1-temp-password.md`) | 코드 확인 |

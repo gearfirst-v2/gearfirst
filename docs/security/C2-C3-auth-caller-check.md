@@ -18,11 +18,33 @@ auth에는 로그인 정보(이메일, 비밀번호, userId 연결)를 다루는
 2. signup으로 `{userId: 1, email: 공격자, personalEmail: 공격자}`를 만들어요. 임시 비밀번호가 공격자 메일로 와요.
 3. 공격자가 그 비밀번호로 로그인하면 `sub=1`, 관리자 이름과 직급이 담긴 토큰이 나와요.
 
+```mermaid
+sequenceDiagram
+    actor A as 공격자
+    participant G as gateway
+    participant Auth as auth
+    participant U as user
+    participant M as 메일
+
+    Note over G: /auth/**는 토큰 검사 없이 통과
+    A->>G: ① delete, 토큰 없음, body: 1
+    G->>Auth: 그대로 전달
+    Auth-->>A: 200, 관리자(userId 1)의 로그인 정보 삭제
+    A->>G: ② signup, 토큰 없음, {userId: 1, email·personalEmail: 공격자}
+    G->>Auth: 그대로 전달
+    Auth->>M: 임시 비밀번호 → 공격자 메일함
+    Auth-->>A: 201
+    A->>Auth: ③ 공격자 이메일 + 임시 비밀번호로 로그인
+    Auth->>U: getUser(1)
+    U-->>Auth: 관리자 이름, 직급
+    Auth-->>A: 토큰 {sub: 1, name: 관리자, rank: 팀장}
+```
+
 ### 공통 원인
 
 auth가 **"누가 불렀는지"를 확인하지 않아요.** gateway 주석에는 "auth 안의 보안 설정이 각 엔드포인트를 직접 지킨다"고 적혀 있지만, 이 세 API는 그 약속이 지켜지지 않았어요.
 
-재현: (구현 때 로컬 compose에서 curl과 Mailpit으로 기록)
+재현: 로컬 compose(고치기 전 코드 `ac445aa`)에서 gateway를 거쳐 위 연쇄 공격을 그대로 해 봤어요. 테스트용 직원(userId 2)을 등록한 뒤, 토큰 없이 delete(200) → 같은 userId로 공격자 메일 signup(201, Mailpit의 공격자 메일함에 임시 비밀번호 도착) → 공격자가 로그인하자 `sub=2`, 피해자 이름·직급이 담긴 토큰이 나왔어요. 토큰 없이 body의 userId만으로 change-password도 200이었어요. 결과는 아래 증명 표에 있어요.
 
 ## 선택지
 
@@ -103,16 +125,59 @@ auth만 직접 토큰을 검증하는 이유는 [ADR 0004](../adr/0004-auth-self
 
 ## 증명
 
-(구현 후 작성)
+### 고친 뒤 흐름
+
+```mermaid
+sequenceDiagram
+    actor A as 공격자
+    actor H as 인사 담당자
+    participant G as gateway
+    participant U as user
+    participant Auth as auth
+
+    rect rgba(220, 80, 80, 0.12)
+    Note over A,Auth: 공격: auth가 직접 토큰을 검사해서 막힘
+    A->>G: delete / signup / change-password, 토큰 없음
+    G->>Auth: 그대로 전달
+    Auth-->>A: 401
+    A->>G: delete / signup, 사람 토큰
+    G->>Auth: 그대로 전달
+    Auth-->>A: 403 (scope internal 없음)
+    end
+
+    rect rgba(80, 160, 80, 0.12)
+    Note over H,Auth: 정상: 직원 등록은 user가 서비스 토큰을 붙여 부름
+    H->>G: registerUser, 사람 토큰
+    G->>U: 토큰 검증 후 전달
+    U->>Auth: /oauth2/token (client credentials, user-service + secret)
+    Auth-->>U: 서비스 토큰 (scope internal, 5분, 만료 전까지 재사용)
+    U->>Auth: signup + Bearer 서비스 토큰
+    Auth-->>U: 201 (서명·만료·scope 확인 통과)
+    U-->>H: 200
+    end
+```
+
+### 로컬 compose (gateway 경유, 2026-11-27)
+
+고치기 전은 `ac445aa`(dev), 고친 뒤는 이 브랜치로 같은 스크립트를 돌렸어요. 매번 테스트용 직원을 새로 등록해 피해자로 썼어요.
 
 | 케이스 | 고치기 전 | 고친 뒤 |
 |---|---|---|
-| delete, 토큰 없음 | | 401 |
-| delete, 사용자 토큰 | | 403 |
-| delete, 서비스 토큰 | | 200 |
-| signup, 토큰 없음 / 사용자 토큰 / 서비스 토큰 | | 401 / 403 / 200 |
-| change-password, 토큰 없음 | | 401 |
-| change-password, body에 남의 userId | | 무시되고 내 계정만 바뀜 |
-| change-password, 틀린 현재 비밀번호 | | 400 |
-| change-password, 5번 틀린 뒤 6번째 시도(맞는 비밀번호) | | 423 |
-| user의 직원 등록·삭제 흐름(로컬 compose) | 정상 | 정상 |
+| delete, 토큰 없음 | 200, 피해자 로그인 정보 삭제 | 401 |
+| delete, 사용자 토큰(팀장) | (해 보지 않음, 토큰 없이도 됨) | 403 |
+| signup, 토큰 없음 + 공격자 메일 | 201, 공격자 메일함에 임시 비밀번호 | 401, 메일 없음 |
+| signup, 사용자 토큰(팀장) | (해 보지 않음) | 403 |
+| 연쇄 공격: 공격자 로그인 | 피해자 `sub`·이름·직급이 담긴 토큰 획득 | 비밀번호를 못 받아 시도 불가 |
+| change-password, 토큰 없음 + body에 피해자 userId | 200, 피해자 비밀번호 변경 | 401 |
+| change-password, 본인 토큰 + body에 다른 userId(999) | – | 200, 본인 계정만 바뀜 |
+| change-password, 틀린 현재 비밀번호 5번 | – | 400 × 5 |
+| change-password, 6번째(맞는 비밀번호) | – | 423 |
+| 직원 등록 (user → auth signup, 서비스 토큰) | 200, 임시 비밀번호 메일 도착 | 200, 임시 비밀번호 메일 도착 |
+| 직원 삭제 (user → auth delete, 서비스 토큰) | – | 200, 삭제된 직원은 로그인 실패 |
+
+### 테스트 (H2)
+
+- `InternalApiCallerTest` (9개): signup·delete의 토큰 없음 401, 사용자 토큰 403, 서비스 토큰 성공, 가짜 서명 401, auth가 실제로 발급한 client credentials 토큰으로 signup 성공, 틀린 client secret이면 토큰 발급 거부
+- `ChangePasswordTest` (14개): 토큰 없음 401, 서비스 토큰 403, body의 남의 userId 무시, 틀리면 400, 5번 뒤 423, 성공 시 초기화, 잠금 만료 후 다시 가능, 남의 실패가 내 계정을 잠그지 않음, 잠금 칸이 빈 기존 계정, 빈 값·확인 불일치 400
+- 고치기 전 코드에서 23개 중 19개가 실패했어요. 통과한 4개 중 3개는 고친 뒤에도 같아야 하는 정상 경우(서비스 토큰 성공, 틀린 secret 거부)이고, "change-password 토큰 없음 401"은 고치기 전에도 우연히 통과해서 전후 비교 증거로 쓰지 않아요(위 compose 결과로 대신해요).
+- `AuthServiceTokenProviderTest` (user, 3개): 토큰을 한 번 받아 재사용, 만료가 가까우면 새로 받음, AuthClient 요청에 Bearer를 붙임
