@@ -11,6 +11,7 @@ public enum ErrorStatus {
     /** 400 BAD_REQUEST */
     VALIDATION_REQUEST_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 값이 입력되지 않았습니다."),
     ESSENTIAL_USERID_EXCEPTION(HttpStatus.BAD_REQUEST, "userId는 필수 입니다."),
+    NOT_REGISTERED_PERSONAL_EMAIL_EXCEPTION(HttpStatus.BAD_REQUEST, "등록된 개인 이메일이 없습니다. 인사 담당자에게 문의하세요."),
 
     /** 401 UNAUTHORIZED */
     USER_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
