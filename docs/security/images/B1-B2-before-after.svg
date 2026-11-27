@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 540" width="860" height="540" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d33"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#393"/></marker>
+    <marker id="k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker>
+    <!-- 사람 아이콘 (가운데 0,0) -->
+    <g id="person">
+      <circle cx="0" cy="-14" r="11" fill="#9aa3ad"/>
+      <path d="M-20,20 Q-20,-1 0,-1 Q20,-1 20,20 Z" fill="#9aa3ad"/>
+    </g>
+    <!-- 서버 아이콘 (가운데 0,0) -->
+    <g id="server">
+      <rect x="-20" y="-20" width="40" height="18" rx="3" fill="none" stroke="#999" stroke-width="2"/>
+      <rect x="-20" y="2" width="40" height="18" rx="3" fill="none" stroke="#999" stroke-width="2"/>
+      <circle cx="-11" cy="-11" r="2.5" fill="#999"/>
+      <circle cx="-11" cy="11" r="2.5" fill="#999"/>
+    </g>
+    <!-- 방패 아이콘 (가운데 0,0) -->
+    <path id="shield" d="M0,-16 L14,-10 L14,2 Q14,13 0,18 Q-14,13 -14,2 L-14,-10 Z"/>
+  </defs>
+  <rect width="860" height="540" fill="#fff"/>
+
+  <!-- ================= 전 ================= -->
+  <text x="24" y="40" font-size="22" font-weight="700" fill="#d33">전</text>
+
+  <use href="#person" x="80" y="140"/>
+  <text x="80" y="182" font-size="13" text-anchor="middle" fill="#222">대리점 직원</text>
+
+  <line x1="112" y1="137" x2="222" y2="137" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="167" y="126" font-size="12" text-anchor="middle" fill="#555">등록·수정·삭제</text>
+  <text x="167" y="155" font-size="12" text-anchor="middle" fill="#d33">"본사 팀장으로"</text>
+
+  <rect x="224" y="105" width="140" height="64" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <use href="#shield" x="250" y="137" fill="#9aa3ad"/>
+  <text x="312" y="133" font-size="14" font-weight="700" text-anchor="middle" fill="#222">gateway</text>
+  <text x="312" y="154" font-size="12" text-anchor="middle" fill="#393">로그인 ✓</text>
+
+  <line x1="364" y1="137" x2="422" y2="137" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="424" y="105" width="140" height="64" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <text x="494" y="133" font-size="14" font-weight="700" text-anchor="middle" fill="#222">user</text>
+  <text x="494" y="154" font-size="12" text-anchor="middle" fill="#d33">검사 없음</text>
+
+  <path d="M564,137 C590,137 590,92 618,92" fill="none" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <line x1="564" y1="137" x2="618" y2="137" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <path d="M564,137 C590,137 590,182 618,182" fill="none" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+
+  <rect x="620" y="76" width="216" height="32" rx="16" fill="#fde8e8" stroke="#d33" stroke-width="2"/>
+  <text x="638" y="97" font-size="13" font-weight="700" fill="#d33">200</text>
+  <text x="672" y="97" font-size="13" fill="#222">본사 팀장 계정 생성</text>
+  <rect x="620" y="121" width="216" height="32" rx="16" fill="#fde8e8" stroke="#d33" stroke-width="2"/>
+  <text x="638" y="142" font-size="13" font-weight="700" fill="#d33">200</text>
+  <text x="672" y="142" font-size="13" fill="#222">내 직급 → 팀장</text>
+  <rect x="620" y="166" width="216" height="32" rx="16" fill="#fde8e8" stroke="#d33" stroke-width="2"/>
+  <text x="638" y="187" font-size="13" font-weight="700" fill="#d33">200</text>
+  <text x="672" y="187" font-size="13" fill="#222">남의 계정 삭제</text>
+
+  <line x1="20" y1="232" x2="840" y2="232" stroke="#e3e3e3" stroke-width="2"/>
+
+  <!-- ================= 후 ================= -->
+  <text x="24" y="276" font-size="22" font-weight="700" fill="#393">후</text>
+
+  <!-- 호출자 -->
+  <use href="#person" x="80" y="318"/>
+  <text x="80" y="360" font-size="13" text-anchor="middle" fill="#222">대리점 직원</text>
+  <use href="#person" x="80" y="408"/>
+  <text x="80" y="450" font-size="13" text-anchor="middle" fill="#222">본사 팀장</text>
+  <use href="#server" x="80" y="488"/>
+  <text x="80" y="526" font-size="13" text-anchor="middle" fill="#777">auth</text>
+
+  <!-- gateway -->
+  <line x1="112" y1="318" x2="222" y2="338" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="112" y1="408" x2="222" y2="388" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="224" y="305" width="140" height="116" rx="8" fill="#f5f6f8" stroke="#555"/>
+  <use href="#shield" x="294" y="338" fill="#9aa3ad"/>
+  <text x="294" y="378" font-size="14" font-weight="700" text-anchor="middle" fill="#222">gateway</text>
+  <text x="294" y="400" font-size="12" text-anchor="middle" fill="#393">로그인 ✓</text>
+
+  <line x1="364" y1="363" x2="422" y2="363" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- auth: gateway 안 거침 -->
+  <line x1="112" y1="488" x2="422" y2="488" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#k)"/>
+  <text x="270" y="479" font-size="12" text-anchor="middle" fill="#777">헤더 없이 getUser (토큰 발급)</text>
+
+  <!-- user + 권한표 -->
+  <rect x="424" y="295" width="150" height="214" rx="8" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="499" y="320" font-size="14" font-weight="700" text-anchor="middle" fill="#222">user</text>
+  <use href="#shield" x="499" y="360" fill="#393"/>
+  <path d="M492,360 L497,366 L507,353" fill="none" stroke="#fff" stroke-width="3"/>
+  <text x="499" y="398" font-size="13" font-weight="700" text-anchor="middle" fill="#1f6e1f">권한표</text>
+
+  <!-- 결과 -->
+  <path d="M574,363 C598,363 598,328 618,328" fill="none" stroke="#393" stroke-width="2" marker-end="url(#g)"/>
+  <line x1="574" y1="380" x2="618" y2="398" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="574" y1="488" x2="618" y2="488" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#k)"/>
+
+  <rect x="620" y="312" width="216" height="32" rx="16" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="638" y="333" font-size="13" font-weight="700" fill="#1f6e1f">403</text>
+  <text x="672" y="333" font-size="13" fill="#222">대리점 직원 ✕ 막힘</text>
+  <rect x="620" y="382" width="216" height="32" rx="16" fill="#f5f6f8" stroke="#555"/>
+  <text x="638" y="403" font-size="13" font-weight="700" fill="#222">200</text>
+  <text x="672" y="403" font-size="13" fill="#222">본사 팀장 ✓ 처리</text>
+  <rect x="620" y="472" width="216" height="32" rx="16" fill="#f5f6f8" stroke="#999" stroke-dasharray="6 4"/>
+  <text x="638" y="493" font-size="13" font-weight="700" fill="#777">200</text>
+  <text x="672" y="493" font-size="13" fill="#555">auth 조회 → 로그인 유지</text>
+</svg>

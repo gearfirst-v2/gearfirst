@@ -15,6 +15,73 @@ GEA-8로 gateway가 토큰을 강제하면서 "로그인했는지"(인증)는 �
 
 재현: 권한표를 그대로 옮긴 매트릭스 테스트를 먼저 썼어요. 고치기 전 코드에서 테스트 60개 중 35개가 실패했어요. 403이어야 할 25개(권한표 20칸, B1·B2 재현 5개)가 200, 401이어야 할 10개가 200이었어요. 500 같은 다른 실패는 없었어요.
 
+## 고치기 전과 후
+
+### 전: 로그인만 하면 통과
+
+대리점 엔지니어가 등록 요청 body에 본사 팀장 값을 넣어요(B1). user는 "누가 보냈는지"를 보지 않고 body대로 만들어요.
+
+```mermaid
+sequenceDiagram
+    actor E as 대리점 엔지니어
+    participant G as gateway
+    participant U as user
+    participant Auth as auth
+
+    E->>G: registerUser + 토큰<br/>body: {rank: LEADER, workType: 본사}
+    Note over G: 토큰 검증 OK (로그인은 했음)
+    G->>U: X-User-WorkType: 대리점, X-User-Rank: 엔지니어
+    Note over U: 호출자를 보지 않음
+    U->>U: body대로 본사 팀장 저장
+    U->>Auth: 로그인 계정 생성
+    U-->>E: 200
+    Note over E: 새 본사 팀장 계정으로 로그인<br/>→ order에서 본사 권한 사용
+```
+
+`updateUser`(자기 직급을 팀장으로), `deleteUser`(남의 계정 삭제)도 같은 모양이에요(B2).
+
+### 후: 호출자 헤더로 권한표 검사
+
+같은 요청이 user의 첫 줄에서 403으로 멈춰요. DB 저장과 auth 호출은 실행되지 않아요.
+
+```mermaid
+sequenceDiagram
+    actor E as 대리점 엔지니어
+    participant G as gateway
+    participant U as user
+    participant Auth as auth
+
+    E->>G: registerUser + 토큰<br/>body: {rank: LEADER, workType: 본사}
+    Note over G: 토큰 검증 OK
+    G->>U: X-User-WorkType: 대리점, X-User-Rank: 엔지니어
+    U->>U: UserAuthorization.requireHeadOfficeLeader<br/>본사 팀장인가? → 아니요
+    U-->>E: 403 접근 권한이 없습니다
+    Note over U,Auth: 저장·계정 생성 없음
+```
+
+### 후: user가 요청을 판단하는 순서
+
+```mermaid
+flowchart TD
+    R[요청 도착] --> H{X-User-* 헤더가 있나?}
+    H -- 없음 --> I{getUser인가?}
+    I -- 예 --> OK1[허용<br/>auth의 토큰 발급용 내부 호출<br/>GEA-8 내부망 신뢰 경계]
+    I -- 아니요 --> E401[401]
+    H -- 있음<br/>gateway를 거친 직원 --> P{권한표: 이 API를<br/>이 직급·근무유형이 할 수 있나?}
+    P -- 아니요 --> E403[403]
+    P -- 예 --> V{회사 이메일을 바꾸나?<br/>updateUser}
+    V -- 예 --> E400[400]
+    V -- 아니요 --> S{자기 직급·근무유형·지역 변경<br/>또는 자기 삭제인가?}
+    S -- 예 --> E403b[403]
+    S -- 아니요 --> OK2[처리]
+```
+
+외부 요청은 gateway가 항상 헤더를 붙여서 "헤더 없음" 갈래로 들어올 수 없어요. 본인 `getUser`는 권한표에서 누구나 O라서 "예"로 통과해요.
+
+### 한눈에 보기
+
+![고치기 전과 후](images/B1-B2-before-after.svg)
+
 ## 권한표
 
 호출자 정보는 gateway가 토큰 클레임으로 넣는 `X-User-*` 헤더예요. 직급과 근무유형은 한글 이름(`팀장`, `본사`)으로 와요.
