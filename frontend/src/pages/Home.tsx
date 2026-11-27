@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { decodeJwt } from '../auth/claims'
 import { fetchWithAuth, getTokens, logout } from '../auth/tokens'
 
 // 백엔드 공통 응답 형식 (auth·user의 ApiResponse)
@@ -7,12 +8,6 @@ type ApiResponse<T> = { status: number; success: boolean; message: string; data?
 
 // auth ChangePasswordRequest의 @Pattern과 같은 규칙. 화면에서 먼저 알려주고, 최종 검사는 서버가 한다
 const PASSWORD_RULE = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/
-
-// JWT 가운데 부분(payload)을 읽기만 한다. 서명 검증은 하지 않으므로 화면 표시에만 쓴다
-function decodeJwt(token: string): unknown {
-  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-  return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))))
-}
 
 export default function Home() {
   const navigate = useNavigate()
@@ -32,6 +27,9 @@ export default function Home() {
       <button type="button" onClick={logout}>
         로그아웃
       </button>
+      <p>
+        <Link to="/employees">직원 관리</Link>
+      </p>
 
       <h2>내 정보 (/user/api/v1/me)</h2>
       <pre>{me}</pre>
