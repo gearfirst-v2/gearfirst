@@ -8,8 +8,8 @@
 | A1 | gateway | 토큰 없이 `X-User-*` 헤더를 위조해 권한 획득 | 수정 완료(GEA-8) |
 | A2 | gateway | 토큰 없이 전체 사용자 목록 조회 | 수정 완료(GEA-8) |
 | A3 | infra | 서비스 포트에 직접 접근해 gateway 우회 (로컬 compose에서만 확인, 운영은 미확인) | 수정 완료(GEA-8) |
-| B1 | user | `registerUser`로 누구나 본사 팀장 계정 생성 | 코드 확인 |
-| B2 | user | `updateUser`/`deleteUser`에 인가 검사 없음 | 코드 확인 |
+| B1 | user | `registerUser`로 누구나 본사 팀장 계정 생성 | 수정 완료(GEA-15) |
+| B2 | user | `updateUser`/`deleteUser`에 인가 검사 없음 | 수정 완료(GEA-15) |
 | C1 | auth | `regenerate-temp-password`가 요청 body의 `personalEmail`로 임시 비밀번호 발송 → 계정 탈취 | 수정 완료(GEA-12) |
 | C2 | auth | `/api/v1/auth/delete`가 permitAll (같은 원인으로 `signup`도 열려 있어 delete와 엮으면 계정 탈취) | 수정 완료(GEA-13) |
 | C3 | auth | `change-password`가 body의 `userId`를 믿고, 무차별 대입 제한 없음 | 수정 완료(GEA-13) |
@@ -36,9 +36,10 @@
 
 ## 우선순위
 
-1. C1 ~ C3 (계정 탈취·삭제)
-2. B1 ~ B2 (권한 매트릭스 테스트 도입)
-3. E1
-4. D1
-5. C4, C5, E2
-6. C7, C8 (k6 기준선 뒤 성능 사례로 측정하며 고침, GCP 배포 전 필수)
+1. ~~C1 ~ C3 (계정 탈취·삭제)~~ 완료
+2. ~~B1 ~ B2 (권한 매트릭스 테스트 도입)~~ 완료
+3. D1
+4. C4, C5, C6
+5. 모니터링
+6. k6 기준선
+7. 성능 사례: E1, E2, N+1, C7, C8 (k6로 측정하며 고침, GCP 배포 전 필수)
