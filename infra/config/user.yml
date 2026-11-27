@@ -9,6 +9,12 @@ auth-service:
   # auth에서 서비스 토큰(client credentials)을 받을 때 쓰는 비밀값. 값은 infra/.env에만 둔다 (GEA-13)
   client-secret: ${USER_SERVICE_CLIENT_SECRET}
 
+# 첫 본사 계정 (GEA-15). 본사 팀장이 0명일 때만 이 이메일로 만들고, 임시 비밀번호는 개인 메일로 보낸다. 비우면 만들지 않는다
+bootstrap:
+  admin:
+    email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    personal-email: ${BOOTSTRAP_ADMIN_PERSONAL_EMAIL:}
+
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
