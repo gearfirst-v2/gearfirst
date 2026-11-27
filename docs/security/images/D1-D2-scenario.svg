@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 800" width="960" height="800" font-family="-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+  <defs>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d33"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#393"/></marker>
+    <marker id="k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker>
+    <g id="hacker">
+      <circle cx="0" cy="-14" r="11" fill="#d33"/>
+      <path d="M-20,20 Q-20,-1 0,-1 Q20,-1 20,20 Z" fill="#d33"/>
+    </g>
+    <g id="person">
+      <circle cx="0" cy="-14" r="11" fill="#9aa3ad"/>
+      <path d="M-20,20 Q-20,-1 0,-1 Q20,-1 20,20 Z" fill="#9aa3ad"/>
+    </g>
+  </defs>
+  <rect width="960" height="800" fill="#fff"/>
+
+  <!-- 범례 -->
+  <rect x="640" y="18" width="14" height="14" fill="#fde8e8" stroke="#d33"/>
+  <text x="660" y="30" font-size="12" fill="#222">공격 성공</text>
+  <rect x="740" y="18" width="14" height="14" fill="#e2f5e2" stroke="#393"/>
+  <text x="760" y="30" font-size="12" fill="#222">막힘 / 정상</text>
+
+  <!-- ================= D1 ================= -->
+  <text x="24" y="34" font-size="18" font-weight="700" fill="#222">D1. 서비스 하나가 해킹당하면, 피해가 어디까지 번지나</text>
+
+  <!-- D1 전 -->
+  <text x="24" y="74" font-size="16" font-weight="700" fill="#d33">전</text>
+  <use href="#hacker" x="80" y="125"/>
+  <text x="80" y="165" font-size="12" text-anchor="middle" fill="#222">해커가 user</text>
+  <text x="80" y="181" font-size="12" text-anchor="middle" fill="#222">서비스를 장악</text>
+
+  <line x1="112" y1="122" x2="298" y2="122" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <text x="205" y="108" font-size="12" text-anchor="middle" fill="#d33">user가 가진 DB 비밀번호</text>
+  <text x="205" y="142" font-size="12" text-anchor="middle" fill="#d33">= 관리자 비밀번호</text>
+
+  <rect x="300" y="88" width="170" height="70" rx="8" fill="#fde8e8" stroke="#d33" stroke-width="2"/>
+  <text x="385" y="117" font-size="14" font-weight="700" text-anchor="middle" fill="#222">DB 서버</text>
+  <text x="385" y="140" font-size="12" text-anchor="middle" fill="#d33">관리자로 로그인됨</text>
+
+  <line x1="470" y1="108" x2="568" y2="78" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <line x1="470" y1="123" x2="568" y2="123" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <line x1="470" y1="138" x2="568" y2="168" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <rect x="570" y="58" width="370" height="38" rx="6" fill="#fde8e8" stroke="#d33"/>
+  <text x="586" y="82" font-size="13" fill="#222">로그인 DB: 남의 비밀번호를 바꿔 계정 탈취</text>
+  <rect x="570" y="104" width="370" height="38" rx="6" fill="#fde8e8" stroke="#d33"/>
+  <text x="586" y="128" font-size="13" fill="#222">발주 DB: 발주 조작·삭제</text>
+  <rect x="570" y="150" width="370" height="38" rx="6" fill="#fde8e8" stroke="#d33"/>
+  <text x="586" y="174" font-size="13" fill="#222">DB 서버 자체: 리눅스 명령 실행</text>
+
+  <!-- D1 후 -->
+  <text x="24" y="240" font-size="16" font-weight="700" fill="#393">후</text>
+  <use href="#hacker" x="80" y="291"/>
+  <text x="80" y="331" font-size="12" text-anchor="middle" fill="#222">해커가 user</text>
+  <text x="80" y="347" font-size="12" text-anchor="middle" fill="#222">서비스를 장악</text>
+
+  <line x1="112" y1="288" x2="298" y2="288" stroke="#555" stroke-width="2" marker-end="url(#k)"/>
+  <text x="205" y="274" font-size="12" text-anchor="middle" fill="#555">user 전용 계정의</text>
+  <text x="205" y="308" font-size="12" text-anchor="middle" fill="#555">비밀번호만 있음</text>
+
+  <rect x="300" y="254" width="170" height="70" rx="8" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="385" y="283" font-size="14" font-weight="700" text-anchor="middle" fill="#222">DB 서버</text>
+  <text x="385" y="306" font-size="12" text-anchor="middle" fill="#393">user_app (관리자 아님)</text>
+
+  <line x1="470" y1="274" x2="568" y2="244" stroke="#999" stroke-width="2" marker-end="url(#k)"/>
+  <line x1="470" y1="289" x2="568" y2="289" stroke="#999" stroke-width="2" marker-end="url(#k)"/>
+  <line x1="470" y1="304" x2="568" y2="334" stroke="#999" stroke-width="2" marker-end="url(#k)"/>
+  <rect x="570" y="224" width="370" height="38" rx="6" fill="#e2f5e2" stroke="#393"/>
+  <text x="586" y="248" font-size="13" fill="#222">로그인 DB: ✕ 접속 거부</text>
+  <rect x="570" y="270" width="370" height="38" rx="6" fill="#e2f5e2" stroke="#393"/>
+  <text x="586" y="294" font-size="13" fill="#222">발주 DB: ✕ 접속 거부</text>
+  <rect x="570" y="316" width="370" height="38" rx="6" fill="#e2f5e2" stroke="#393"/>
+  <text x="586" y="340" font-size="13" fill="#222">리눅스 명령: ✕ 관리자만 가능</text>
+  <text x="586" y="378" font-size="12" fill="#555">피해는 user 자기 DB 하나에서 멈춰요</text>
+
+  <line x1="20" y1="402" x2="940" y2="402" stroke="#ddd"/>
+
+  <!-- ================= D2 ================= -->
+  <text x="24" y="436" font-size="18" font-weight="700" fill="#222">D2. 같은 와이파이의 낯선 사람이 개발자 노트북에 들어올 수 있나</text>
+
+  <!-- D2 전 -->
+  <text x="24" y="476" font-size="16" font-weight="700" fill="#d33">전</text>
+  <use href="#person" x="80" y="527"/>
+  <text x="80" y="567" font-size="12" text-anchor="middle" fill="#222">카페 옆자리</text>
+  <text x="80" y="583" font-size="12" text-anchor="middle" fill="#222">(같은 와이파이)</text>
+
+  <line x1="112" y1="524" x2="298" y2="524" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <text x="205" y="510" font-size="12" text-anchor="middle" fill="#d33">노트북 IP로 접속</text>
+
+  <rect x="300" y="482" width="170" height="84" rx="8" fill="#fde8e8" stroke="#d33" stroke-width="2"/>
+  <text x="385" y="510" font-size="14" font-weight="700" text-anchor="middle" fill="#222">개발자 노트북</text>
+  <text x="385" y="533" font-size="12" text-anchor="middle" fill="#d33">DB·메일·kafka 문이</text>
+  <text x="385" y="551" font-size="12" text-anchor="middle" fill="#d33">모두에게 열림</text>
+
+  <line x1="470" y1="504" x2="568" y2="474" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <line x1="470" y1="524" x2="568" y2="519" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <line x1="470" y1="544" x2="568" y2="564" stroke="#d33" stroke-width="2" marker-end="url(#r)"/>
+  <rect x="570" y="454" width="370" height="38" rx="6" fill="#fde8e8" stroke="#d33"/>
+  <text x="586" y="478" font-size="13" fill="#222">DB: 관리자 비밀번호를 무제한 대입</text>
+  <rect x="570" y="500" width="370" height="38" rx="6" fill="#fde8e8" stroke="#d33"/>
+  <text x="586" y="524" font-size="13" fill="#222">메일함: 신규 직원 임시 비밀번호 열람</text>
+  <rect x="570" y="546" width="370" height="38" rx="6" fill="#fde8e8" stroke="#d33"/>
+  <text x="586" y="570" font-size="13" fill="#222">kafka: 가짜 이벤트 주입</text>
+
+  <!-- D2 후 -->
+  <text x="24" y="642" font-size="16" font-weight="700" fill="#393">후</text>
+  <use href="#person" x="80" y="693"/>
+  <text x="80" y="733" font-size="12" text-anchor="middle" fill="#222">카페 옆자리</text>
+  <text x="80" y="749" font-size="12" text-anchor="middle" fill="#222">(같은 와이파이)</text>
+
+  <line x1="112" y1="690" x2="296" y2="690" stroke="#999" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="205" y="680" font-size="18" font-weight="700" text-anchor="middle" fill="#d33">✕</text>
+  <text x="205" y="712" font-size="12" text-anchor="middle" fill="#555">연결 거부</text>
+
+  <rect x="300" y="648" width="170" height="84" rx="8" fill="#e2f5e2" stroke="#393" stroke-width="2"/>
+  <text x="385" y="676" font-size="14" font-weight="700" text-anchor="middle" fill="#222">개발자 노트북</text>
+  <text x="385" y="699" font-size="12" text-anchor="middle" fill="#393">문은 노트북 안쪽</text>
+  <text x="385" y="717" font-size="12" text-anchor="middle" fill="#393">(127.0.0.1)에만</text>
+
+  <rect x="570" y="648" width="370" height="38" rx="6" fill="#e2f5e2" stroke="#393"/>
+  <text x="586" y="672" font-size="13" fill="#222">개발자 본인: DB 도구·메일 화면 그대로 사용 ✓</text>
+  <rect x="570" y="694" width="370" height="38" rx="6" fill="#f5f6f8" stroke="#555"/>
+  <text x="586" y="718" font-size="13" fill="#222">서비스끼리: Docker 내부망으로 그대로 통신 ✓</text>
+  <line x1="470" y1="680" x2="568" y2="667" stroke="#393" stroke-width="2" marker-end="url(#g)"/>
+  <text x="586" y="758" font-size="12" fill="#555">브라우저 입구(gateway 8080)만 바깥에 열려 있어요</text>
+</svg>

@@ -49,6 +49,14 @@ ADR 0002에서 Before/After 증거를 남기려고 공유 계정을 일부러 �
 - `infra/.env.example`: `AUTH_DB_PASSWORD`·`USER_DB_PASSWORD`·`ORDER_DB_PASSWORD`, `openssl rand -hex 24`로 만들라는 주석(영문·숫자만 나와 `.env`·쉘·SQL에서 안 깨짐)
 - `infra/verify-d1-d2.sh`: 인수 기준을 검사하는 스크립트(아래 증명)
 
+고치기 전과 후 (빨간색이 뚫린 곳, 초록색이 고친 곳):
+
+![고치기 전과 후](images/D1-D2-before-after.svg)
+
+공격 시나리오로 보면:
+
+![공격 시나리오로 본 전과 후](images/D1-D2-scenario.svg)
+
 적용 방법: init 스크립트는 빈 볼륨에서만 실행돼요. `.env`에 새 변수를 넣고 `docker compose down -v` 후 `up -d`. 기존 볼륨으로 띄우면 계정이 없어서 서비스가 `password authentication failed for user "auth_app"`으로 죽어요.
 
 ## 한계
