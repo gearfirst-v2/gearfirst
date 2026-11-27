@@ -7,7 +7,7 @@
 
 # GEA-N: 제목 (라벨) (YYYY-MM-DD)
 
-* 링크: Linear GEA-N / PR #N / `docs/security/<라벨>-설명.md`
+* 링크: GitHub 이슈 #N (GEA-N) / PR #N / `docs/security/<라벨>-설명.md`
 
 ## 1. 한 줄 요약
 

@@ -1,13 +1,14 @@
 # AGENTS.md
 
 GearFirst v2: 부트캠프 팀 MSA 프로젝트 중 auth, user, order, gateway만 가져와 인증/인가 보안을 고도화하는 모노레포.
-범위는 이 4개 서비스뿐이에요. warehouse, repair, notification 등 다른 서비스는 이 레포에 없어요.
+범위는 이 4개 서비스와 개발용 프론트뿐이에요. warehouse, repair, notification 등 다른 서비스는 이 레포에 없어요.
 
 ## 구조
 
 - `auth/` 인가 서버(Spring Authorization Server, OAuth2 + PKCE, JWT 발급)
 - `user/` 사용자·조직, `order/` 발주, `gateway/` Spring Cloud Gateway(WebFlux, JWT 검증 후 `X-User-*` 헤더 주입)
 - `infra/` 로컬 실행용 docker-compose, 설정 `infra/config/*.yml`, 비밀값 `infra/.env`
+- `frontend/` 개발용 최소 화면(React + TS + Vite, 로그인·비밀번호 변경). Gradle과 별개로 `npm test`, `npm run build`. 설명은 `frontend/README.md`
 
 ## 빌드·테스트
 
@@ -26,7 +27,7 @@ GearFirst v2: 부트캠프 팀 MSA 프로젝트 중 auth, user, order, gateway�
 
 ## 작업 흐름
 
-1. (사용자) Linear 이슈와 브랜치를 만들어요.
+1. (사용자) GitHub 이슈와 브랜치를 만들어요.
 2. (에이전트) 사용자가 알려준 브랜치에서만 작업해요. 사용자가 만들어달라고 하지 않는 한 이슈·브랜치를 직접 만들지 않아요. 브랜치를 안 알려주면 현재 브랜치를 보여주고 어디서 할지 물어요.
 3. (에이전트) 보안·버그 수정이면 재현 테스트를 먼저 쓰고, 실패하는 걸 확인해요.
 4. (에이전트) 수정해요. 테스트 없는 코드를 고칠 땐 기존 동작을 고정하는 테스트부터 써요.

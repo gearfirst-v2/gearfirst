@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       services: ${{ steps.filter.outputs.changes }}
+      frontend: ${{ steps.fe.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -23,6 +24,12 @@ jobs:
             user: 'user/**'
             order: 'order/**'
             gateway: 'gateway/**'
+      # frontend는 Gradle이 아니라서 위 matrix에 넣지 않고 따로 본다
+      - uses: dorny/paths-filter@v3
+        id: fe
+        with:
+          filters: |
+            frontend: ['frontend/**', '.github/workflows/ci.yml']
 
   # 바뀐 서비스마다 job을 하나씩 띄워 빌드하고 테스트한다.
   build:
@@ -46,10 +53,29 @@ jobs:
       - run: ./gradlew spotlessCheck # 포맷이 틀리면 여기서 실패 (고치기: ./gradlew spotlessApply)
       - run: ./gradlew build # 컴파일 + 테스트 + jar
 
+  # 개발용 화면. 바뀌었을 때만 테스트와 빌드(타입 검사 포함)를 돌린다.
+  frontend:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
   # 브랜치 보호의 필수 체크용. build는 matrix라 이름이 바뀌고 skip되기도 해서, 항상 도는 job 하나로 결과를 모은다.
   # build가 하나라도 실패·취소되면 실패, 바뀐 서비스가 없어 skip되면 성공.
   ci-result:
-    needs: [changes, build]
+    needs: [changes, build, frontend]
     if: always()
     runs-on: ubuntu-latest
     steps:
