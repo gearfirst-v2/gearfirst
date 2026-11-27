@@ -23,7 +23,7 @@ spring:
     timeout-per-shutdown-phase: 30s
   datasource:
     url: jdbc:postgresql://postgres:5432/authdb
-    username: postgres
+    username: auth_app
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
