@@ -1,5 +1,7 @@
 package com.gearfirst.user_be.workType.controller;
 
+import com.gearfirst.user_be.common.config.annotation.CurrentUser;
+import com.gearfirst.user_be.common.context.UserContext;
 import com.gearfirst.user_be.common.response.ApiResponse;
 import com.gearfirst.user_be.common.response.SuccessStatus;
 import com.gearfirst.user_be.workType.dto.WorkTypeResponse;
@@ -22,7 +24,8 @@ public class WorkTypeController {
 
     @Operation(summary = "지점 리스트 조회", description = "근무 지점 리스트를 조회한다.")
     @GetMapping("getWorkType")
-    public ResponseEntity<ApiResponse<List<WorkTypeResponse>>> getWorkType() {
+    public ResponseEntity<ApiResponse<List<WorkTypeResponse>>> getWorkType(
+            @CurrentUser UserContext caller) { // 로그인한 직원만(헤더 없으면 401)
         List<WorkTypeResponse> response = workTypeService.getWorkType();
 
         return ApiResponse.success(SuccessStatus.GET_WORKTYPE_SUCCESS, response);

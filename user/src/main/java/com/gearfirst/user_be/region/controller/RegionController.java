@@ -1,5 +1,7 @@
 package com.gearfirst.user_be.region.controller;
 
+import com.gearfirst.user_be.common.config.annotation.CurrentUser;
+import com.gearfirst.user_be.common.context.UserContext;
 import com.gearfirst.user_be.common.response.ApiResponse;
 import com.gearfirst.user_be.common.response.SuccessStatus;
 import com.gearfirst.user_be.region.dto.RegionResponse;
@@ -22,7 +24,8 @@ public class RegionController {
 
     @Operation(summary = "근무 지역 리스트 조회", description = "근무지 지역 리스트를 조회한다.")
     @GetMapping("getRegion")
-    public ResponseEntity<ApiResponse<List<RegionResponse>>> getRegion() {
+    public ResponseEntity<ApiResponse<List<RegionResponse>>> getRegion(
+            @CurrentUser UserContext caller) { // 로그인한 직원만(헤더 없으면 401)
         List<RegionResponse> response = regionService.getRegion();
 
         return ApiResponse.success(SuccessStatus.GET_REGION_SUCCESS, response);
