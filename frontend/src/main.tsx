@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import RequireAuth from './auth/RequireAuth'
 import AuthCallback from './pages/AuthCallback'
+import Employees from './pages/Employees'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import './style.css'
@@ -18,6 +19,14 @@ createRoot(document.getElementById('root')!).render(
           element={
             <RequireAuth>
               <Home />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/employees"
+          element={
+            <RequireAuth>
+              <Employees />
             </RequireAuth>
           }
         />

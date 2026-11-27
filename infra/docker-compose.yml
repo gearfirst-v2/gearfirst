@@ -69,6 +69,8 @@ services:
       AUTH_SERVICE_URL: http://auth:8080/auth
       USER_SERVICE_CLIENT_SECRET: ${USER_SERVICE_CLIENT_SECRET}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      BOOTSTRAP_ADMIN_PERSONAL_EMAIL: ${BOOTSTRAP_ADMIN_PERSONAL_EMAIL:-}
     volumes:
       - ./config/user.yml:/config/application.yml:ro
       - ./config/user-seed.sql:/config/user-seed.sql:ro

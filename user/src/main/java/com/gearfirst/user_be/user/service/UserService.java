@@ -1,6 +1,9 @@
 package com.gearfirst.user_be.user.service;
 
+import com.gearfirst.user_be.common.context.UserContext;
+import com.gearfirst.user_be.common.exception.BadRequestException;
 import com.gearfirst.user_be.common.exception.ConflictException;
+import com.gearfirst.user_be.common.exception.ForbiddenException;
 import com.gearfirst.user_be.common.exception.InternalServerException;
 import com.gearfirst.user_be.common.exception.NotFoundException;
 import com.gearfirst.user_be.common.response.ErrorStatus;
@@ -15,6 +18,7 @@ import com.gearfirst.user_be.user.spec.UserSpecification;
 import com.gearfirst.user_be.workType.entity.WorkTypeEntity;
 import com.gearfirst.user_be.workType.repository.WorkTypeRepositoy;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,14 +34,21 @@ public class UserService {
     private final RegionRepository regionRepository;
     private final AuthClient authClient;
 
-    public void updateUser(UserRequest request) {
-        UserEntity entity = userRepository
-                .findById(request.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
+    public void updateUser(UserContext caller, UserRequest request) {
+        UserAuthorization.requireHeadOfficeLeader(caller);
+        UserEntity entity = findUser(request.getUserId());
+
+        // 회사 이메일은 auth 로그인 이메일과 같아야 해서 바꾸지 않는다
+        if (request.getEmail() != null && !request.getEmail().equals(entity.getEmail())) {
+            throw new BadRequestException(ErrorStatus.EMAIL_NOT_CHANGEABLE.getMessage());
+        }
+        // 마지막 본사 팀장이 자신을 강등해 관리자가 0명이 되지 않게
+        if (UserAuthorization.isSelf(caller, entity.getId()) && changesRole(entity, request)) {
+            throw new ForbiddenException(ErrorStatus.FORBIDDEN_SELF_CHANGE.getMessage());
+        }
 
         entity.setName(request.getName());
         entity.setPhoneNum(request.getPhoneNum());
-        entity.setEmail(request.getEmail());
         entity.setRank(request.getRank());
 
         if (request.getRegionId() != null) {
@@ -57,7 +68,19 @@ public class UserService {
         userRepository.save(entity);
     }
 
-    public Page<UserResponse> getAllUser(Rank rank, Long workTypeId, Long regionId, String keyword, Pageable pageable) {
+    private static boolean changesRole(UserEntity entity, UserRequest request) {
+        return request.getRank() != entity.getRank()
+                || (request.getRegionId() != null
+                        && !Objects.equals(
+                                request.getRegionId(), entity.getRegion().getId()))
+                || (request.getWorkTypeId() != null
+                        && !Objects.equals(
+                                request.getWorkTypeId(), entity.getWorkType().getId()));
+    }
+
+    public Page<UserResponse> getAllUser(
+            UserContext caller, Rank rank, Long workTypeId, Long regionId, String keyword, Pageable pageable) {
+        UserAuthorization.requireHeadOffice(caller);
         Specification<UserEntity> spec = UserSpecification.build(rank, workTypeId, regionId, keyword);
 
         Page<UserEntity> userEntityPage = userRepository.findAll(spec, pageable);
@@ -80,7 +103,14 @@ public class UserService {
     }
 
     @Transactional
-    public void registerUser(CreateUserRequest userRequest) {
+    public void registerUser(UserContext caller, CreateUserRequest userRequest) {
+        UserAuthorization.requireHeadOfficeLeader(caller);
+        createUser(userRequest);
+    }
+
+    /** 권한 검사 없이 계정을 만든다. registerUser와 첫 본사 계정 부트스트랩이 쓴다 */
+    @Transactional
+    public void createUser(CreateUserRequest userRequest) {
         RegionEntity region = regionRepository
                 .findById(userRequest.getRegionId())
                 .orElseThrow(() -> new IllegalArgumentException("지역 정보를 찾을 수 없습니다."));
@@ -114,9 +144,12 @@ public class UserService {
         }
     }
 
-    public UserResponse getUser(Long userId) {
-        UserEntity entity =
-                userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
+    /** caller가 null이면 헤더 없는 내부 호출(auth의 토큰 발급)이다. GEA-8 경계대로 내부망은 믿는다 */
+    public UserResponse getUser(UserContext caller, Long userId) {
+        if (caller != null && !UserAuthorization.isSelf(caller, userId)) {
+            UserAuthorization.requireHeadOffice(caller);
+        }
+        UserEntity entity = findUser(userId);
 
         return UserResponse.builder()
                 .id(entity.getId())
@@ -132,17 +165,27 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String email) {
+    public void deleteUser(UserContext caller, String email) {
+        UserAuthorization.requireHeadOfficeLeader(caller);
         UserEntity entity = userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
-        if (entity == null) throw new EntityNotFoundException("해당 사용자가 없습니다.");
+        // 마지막 본사 팀장이 자신을 지워 관리자가 0명이 되지 않게
+        if (UserAuthorization.isSelf(caller, entity.getId())) {
+            throw new ForbiddenException(ErrorStatus.FORBIDDEN_SELF_DELETE.getMessage());
+        }
         userRepository.delete(entity);
         try {
             authClient.deleteUser(entity.getId());
         } catch (Exception e) {
             throw new InternalServerException(ErrorStatus.FAIL_DELETE_USER.getMessage());
         }
+    }
+
+    private UserEntity findUser(Long userId) {
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_USER_EXCEPTION.getMessage()));
     }
 }

@@ -1,6 +1,6 @@
 # frontend
 
-개발할 때 쓰는 최소 화면이에요(로그인, 내 정보, 비밀번호 변경, 로그아웃). React + TypeScript + Vite.
+개발할 때 쓰는 최소 화면이에요(로그인, 내 정보, 비밀번호 변경, 직원 관리, 로그아웃). React + TypeScript + Vite.
 
 ## 실행
 
@@ -27,3 +27,4 @@
 - API: 브라우저는 5173에만 요청하고, Vite 프록시가 gateway(8080)로 넘겨요. 같은 출처라 CORS가 필요 없어요.
   Vite 프록시는 개발 서버에서만 동작해요. 배포할 때는 같은 출처 구성(LB·nginx 경로 라우팅 또는 Vercel rewrites)이 필요해요.
 - 로그아웃: OIDC 로그아웃(`/auth/connect/logout`)으로 auth 세션까지 끊어요.
+- 직원 관리(`/employees`): 목록·등록·수정·삭제. 버튼은 access 토큰 클레임(`work_type`, `rank`)으로 숨기기만 하고, 진짜 차단은 user의 403이에요(GEA-15, `docs/security/B1-B2-user-authz.md`).

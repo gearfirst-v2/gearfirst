@@ -36,7 +36,7 @@ user·order는 JWT를 직접 보지 않고, gateway가 붙여주는 `X-User-*` �
 
 ## 한계
 
-- **내부망 위조**: user·order는 "gateway를 거쳐 왔으면 헤더는 진짜"라고 믿어요. 헤더에 서명이 없어서, 같은 네트워크의 다른 컨테이너·Pod가 털리면 user에 직접 위조 헤더를 보낼 수 있어요. 막으려면 선택지 2나 3.
+- **내부망 위조**: user·order는 "gateway를 거쳐 왔으면 헤더는 진짜"라고 믿어요. 헤더에 서명이 없어서, 같은 네트워크의 다른 컨테이너·Pod가 털리면 user에 직접 위조 헤더를 보낼 수 있어요. 막으려면 선택지 2나 3. GEA-15에서 auth의 내부 호출용으로 헤더 없는 user `getUser`를 허용한 것도 같은 경계예요([B1-B2](B1-B2-user-authz.md)).
 - **인가 없음**: 이제 "로그인했는지"만 봐요. 사원도 전체 직원 조회, 본사 팀장 계정 생성이 가능해요 → B1~B2.
 - **`/auth/**` 통째 공개**: auth 안의 개별 엔드포인트는 auth 보안 설정에 맡겼는데, 거기서 `regenerate-temp-password`, `delete`, `change-password`, `signup`이 permitAll이라 외부에서 gateway를 통해 호출돼요 → C1~C3, signup 후보.
 - **운영 미확인**: 포트를 닫은 건 로컬 compose뿐. 운영 ClusterIP·NetworkPolicy는 배포 단계에서 확인.

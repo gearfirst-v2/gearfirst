@@ -4,9 +4,13 @@ import com.gearfirst.user_be.user.enums.Rank;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor // 첫 본사 계정 부트스트랩이 코드로 만든다
 public class CreateUserRequest {
     @NotBlank(message = "이름은 필수입니다.")
     private String name;
