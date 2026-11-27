@@ -16,4 +16,4 @@
 
 ## 기타
 
-Closes GEA-N
+Closes #N <!-- GitHub 이슈 번호. dev에 머지되면 이슈가 자동으로 닫혀요 -->
